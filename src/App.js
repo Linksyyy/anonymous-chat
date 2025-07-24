@@ -1,10 +1,14 @@
 import './App.css';
-import Chats from './components/Chats'
+import MessageList from './components/MessageList';
+import ChatWindow from './components/ChatWindow';
 
 function App() {
-  return (<>
-    <Chats/>
-  </>);
+  return (
+    <div className="App">
+      <MessageList />
+      <ChatWindow />
+    </div>
+  );
 }
 
 export default App;

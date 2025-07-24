@@ -1,7 +1,18 @@
+* {
+    font-family: 'Franklin Gothic Medium', 'Arial Narrow', Arial, sans-serif;
+    font-size: 100%;
+    margin: 0;
+}
+
 #root {
     width: 100%;
     height: 100%;
     padding: 1% 0 1% 0;
     background-color: black;
-    margin: 0;
+}
+
+div {
+    background-color: #070707;
+    padding: 1%;
+    color: blanchedalmond;
 }
