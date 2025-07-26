@@ -1,0 +1,10 @@
+.ChatWindow {
+  width: 75%;
+  display: flex;
+  flex-direction: column;
+}
+
+.messages {
+  flex-grow: 1;
+  padding: 20px;
+}
