@@ -3,12 +3,6 @@
   height: 100vh;
 }
 
-.MessageList {
-  width: 25%;
-  border-right: 1px solid #ccc;
-  padding: 20px;
-}
-
 .ChatWindow {
   width: 75%;
   display: flex;
@@ -20,27 +14,3 @@
   padding: 20px;
 }
 
-form {
-  display: flex;
-  padding: 20px;
-  border-top: 1px solid #ccc;
-}
-
-input {
-  flex-grow: 1;
-  padding: 10px;
-  border: 1px solid #ccc;
-  border-radius: 5px;
-  background-color: black;
-  color: #ccc;
-}
-
-button {
-  padding: 10px 20px;
-  border: 1px solid #ccc;
-  background-color: #110018;
-  color: white;
-  border-radius: 5px;
-  margin-left: 10px;
-  cursor: pointer;
-}

@@ -1,4 +1,4 @@
-import MessageInput from './MessageInput';
+import MessageInput from '../MessageInput/index';
 
 export default function ChatWindow() {
     return (

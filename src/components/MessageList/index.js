@@ -1,4 +1,5 @@
 import { Component } from "react";
+import styles from "./MessageList.module.css"
 
 export default class Main extends Component {
     state = {
@@ -7,7 +8,7 @@ export default class Main extends Component {
     render = () => {
         const { chats } = this.state
         return (
-            <div className="MessageList">
+            <div className={styles.MessageList}>
                 <h2>Chats</h2>
                 <section>
                     {chats.map((chat, index) => (
