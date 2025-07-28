@@ -14,7 +14,7 @@
 .me {
   margin-top: 5%;
   border-radius: 10px;
-  padding: 3%;
+  padding: 0.5% 3% 0.5% 3%;
   background-color: #1f1f1f;
   text-align: right;
   margin-left: auto;
@@ -23,7 +23,7 @@
 .other {
   margin-top: 5%;
   border-radius: 10px;
-  padding: 3%;
+  padding: 0.5% 3% 0.5% 3%;
   background-color: #401040;
   text-align: left;
   margin-right: auto;

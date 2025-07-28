@@ -1,5 +1,22 @@
 .MessageList {
   width: 25%;
+  max-height: 100vh;
   border-right: 1px solid #ccc;
   padding: 20px;
+  overflow: auto;
+  scrollbar-color: purple;
+}
+
+.ChatCahed {
+  border-top: outset;
+  border-width: 1px;
+  padding: 4%;
+  padding-left: 1em;
+}
+
+.ChatCahed:hover {
+  background-color: #0f0f0f;
+  cursor: pointer;
+  font-size: 1.2em;
+  transition: font-size 0.1s ease-in-out;
 }
