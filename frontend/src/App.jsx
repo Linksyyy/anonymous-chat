@@ -1,13 +1,14 @@
-import MessageList from './components/MessageList';
-import ChatWindow from './components/ChatWindow';
+import MessageList from "./Components/MessageList";
+import ChatWindow from "./Components/ChatWindow";
+import { Component } from "react";
 
-function App() {
-  return (
-    <>
-      <MessageList />
-      <ChatWindow />
-    </>
-  );
+export default class App extends Component {
+  render() {
+    return (
+      <>
+        <MessageList />
+        <ChatWindow />
+      </>
+    );
+  }
 }
-
-export default App;
