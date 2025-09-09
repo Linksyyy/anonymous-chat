@@ -3,18 +3,23 @@ import { useState } from "react";
 import { CiLogin, CiLogout } from "react-icons/ci";
 
 export default function Login() {
-  const [user, setUser] = useState('');
-  const [password, setPassword] = useState('');
-  function handleSubmit(e) {
+  const [user, setUser] = useState("");
+  const [password, setPassword] = useState("");
+  const [error, setError] = useState(null);
+
+  async function handleSubmit(e) {
     e.preventDefault();
 
-    fetch("/api/login", {
+    const res = await fetch("/api/login", {
       method: "POST",
       headers: {
         "Content-Type": "application/json",
       },
       body: JSON.stringify({ username: user, password }),
     });
+
+    if (res.status !== 200) return setError(await res.json());
+    setError(null);
   }
 
   return (
@@ -23,6 +28,9 @@ export default function Login() {
         onSubmit={handleSubmit}
         className="bg-secondary w-full max-w-md rounded-2xl p-8 flex flex-col"
       >
+        {error && (
+          <h1 className="text-red-400 justify-center flex">{error.message}</h1>
+        )}
         <h1 className="text-4xl p-1 justify-center flex mb-4 font-extrabold">
           Login
         </h1>
@@ -30,6 +38,7 @@ export default function Login() {
           <label className="text-lg mb-1">User</label>
           <input
             autoFocus
+            required
             type="text"
             value={user}
             onChange={(e) => setUser(e.target.value)}
@@ -39,6 +48,7 @@ export default function Login() {
         <div>
           <label className="text-lg mb-1">Password</label>
           <input
+            required
             type="text"
             value={password}
             onChange={(e) => setPassword(e.target.value)}
