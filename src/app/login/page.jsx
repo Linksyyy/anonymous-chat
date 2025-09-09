@@ -1,17 +1,24 @@
 "use client";
-import { useEffect, useState } from "react";
+import { useState } from "react";
 import { CiLogin, CiLogout } from "react-icons/ci";
 
 export default function Login() {
-  const [user, setUser] = useState(null);
-  const [password, setPassword] = useState(null);
+  const [user, setUser] = useState('');
+  const [password, setPassword] = useState('');
   function handleSubmit(e) {
     e.preventDefault();
+
+    fetch("/api/login", {
+      method: "POST",
+      headers: {
+        "Content-Type": "application/json",
+      },
+      body: JSON.stringify({ username: user, password }),
+    });
   }
-  useEffect(() => console.log(user, password), [user, password]);
 
   return (
-    <div className="fixed inset-0 bg-black/25 flex items-start justify-center pt-40 overflow-y-auto z-50">
+    <div className="fixed inset-0 bg-black/25 flex items-start justify-center pt-60 overflow-y-auto z-50">
       <form
         onSubmit={handleSubmit}
         className="bg-secondary w-full max-w-md rounded-2xl p-8 flex flex-col"
@@ -35,7 +42,7 @@ export default function Login() {
             type="text"
             value={password}
             onChange={(e) => setPassword(e.target.value)}
-            className="w-full bg-tertiary mt-1 h-10 rounded"
+            className="w-full p-2 text-lg bg-tertiary mt-1 h-10 rounded"
           />
         </div>
         <div className="flex justify-between mt-10">
@@ -46,7 +53,7 @@ export default function Login() {
             type="submit"
             className="bg-green-600 hover:bg-green-700 gap-2 font-bold py-2 px-4 rounded flex items-center"
           >
-            <CiLogin /> Login
+            Login <CiLogin />
           </button>
         </div>
       </form>
