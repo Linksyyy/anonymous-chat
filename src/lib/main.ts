@@ -4,6 +4,6 @@ export async function login(user: string, password: string) {
     body: JSON.stringify({ username: user, password }),
   });
 
-  if (res.status !== 200) return { message: await res.json(), hasError: true };
-  return { message: await res.json(), hasError: false };
+  if (res.status !== 200) return { message: await res.json(), error: true };
+  return { message: await res.json(), error: false };
 }
