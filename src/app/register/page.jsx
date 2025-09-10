@@ -1,44 +1,22 @@
 "use client";
-import { useState } from "react";
-import { MdCancel, MdLogin } from "react-icons/md";
-import { login } from "../../lib/main";
 import Link from "next/link";
-<<<<<<< Updated upstream
-=======
-import { useRouter } from "next/navigation";
->>>>>>> Stashed changes
+import { useState } from "react";
+import { MdCancel, MdCreate } from "react-icons/md";
+import { register } from "../../lib/main";
 
-export default function Login() {
-  const [user, setUser] = useState("");
+export default function Register() {
+  const [username, setUsername] = useState("");
   const [password, setPassword] = useState("");
-<<<<<<< Updated upstream
-  const [error, setError] = useState(null);
-=======
+  const [confPassword, setConfPassword] = useState("");
   const [error, setError] = useState(false);
   const [log, setLog] = useState(null);
-  const router = useRouter();
->>>>>>> Stashed changes
 
   async function handleSubmit(e) {
+    setError(false);
     e.preventDefault();
-    setUser(user.trim());
-    setPassword(password.trim());
-    const res = await login(user, password);
-<<<<<<< Updated upstream
-    if (res.error) return setError(res.message);
-    setError(null);
-=======
-    const end = Date.now();
-    const latency = `${end - start} ms`;
-
+    const res = await register(username, password);
     setError(res.hasError);
-    setLog({ ...res.message, latency });
-
-    //cant use state error like conditional bc res is async
-    if (!res.hasError) {
-      router.push("/");
-    }
->>>>>>> Stashed changes
+    setLog(res.message);
   }
 
   return (
@@ -48,10 +26,10 @@ export default function Login() {
         className="bg-secondary w-full max-w-md gap-10 rounded-2xl p-8 flex flex-col"
       >
         {error && (
-          <h1 className="text-red-400 justify-center flex">{error.message}</h1>
+          <h1 className="text-red-400 justify-center flex">{log.message}</h1>
         )}
         <h1 className="text-4xl p-1 justify-center flex mb-4 font-extrabold">
-          Login
+          Register
         </h1>
         <div className="mb-4">
           <label className="text-lg mb-1">User</label>
@@ -59,8 +37,8 @@ export default function Login() {
             autoFocus
             required
             type="text"
-            value={user}
-            onChange={(e) => setUser(e.target.value)}
+            value={username}
+            onChange={(e) => setUsername(e.target.value)}
             className="w-full p-2 text-lg bg-tertiary mt-1 h-10 rounded"
           />
         </div>
@@ -74,16 +52,22 @@ export default function Login() {
             className="w-full p-2 text-lg bg-tertiary mt-1 h-10 rounded"
           />
         </div>
+        <div>
+          <label className="text-lg mb-1">Confirm password</label>
+          <input
+            required
+            type="password"
+            value={confPassword}
+            onChange={(e) => setConfPassword(e.target.value)}
+            className="w-full p-2 text-lg bg-tertiary mt-1 h-10 rounded"
+          />
+        </div>
         <div className="flex justify-between mt-10">
           <Link href="/">
-<<<<<<< Updated upstream
-            <button className="bg-zinc-600 hover:bg-zinc-700 gap-2 font-bold py-2 px-4 rounded flex items-center">
-=======
             <button
               type="button"
               className="bg-zinc-600 hover:bg-zinc-700 gap-2 font-bold py-2 px-4 rounded flex items-center"
             >
->>>>>>> Stashed changes
               <MdCancel /> Cancel
             </button>
           </Link>
@@ -91,7 +75,7 @@ export default function Login() {
             type="submit"
             className="bg-green-600 hover:bg-green-700 gap-2 font-bold py-2 px-4 rounded flex items-center"
           >
-            Login <MdLogin />
+            Register <MdCreate />
           </button>
         </div>
       </form>
