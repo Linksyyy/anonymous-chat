@@ -9,8 +9,12 @@
     "@testing-library/jest-dom": "^6.6.3",
     "@testing-library/react": "^16.3.0",
     "@testing-library/user-event": "^13.5.0",
+    "bcryptjs": "^3.0.2",
     "caniuse-lite": "^1.0.30001739",
+    "dotenv": "^17.2.2",
+    "drizzle-orm": "^0.44.5",
     "next": "^15.5.2",
+    "pg": "^8.16.3",
     "postcss": "^8.5.6",
     "react": "^19.1.0",
     "react-dom": "^19.1.0",
@@ -23,7 +27,8 @@
     "dev": "next dev --turbopack",
     "start": "next start",
     "build": "next build",
-    "build:css": "bunx tailwindcss -i ./src/index.css -m -o ./public/tailwind.css --watch"
+    "build:css": "bunx tailwindcss -i ./src/index.css -m -o ./public/tailwind.css --watch",
+    "db:push": "drizzle-kit push"
   },
   "eslintConfig": {
     "extends": [
@@ -46,7 +51,10 @@
   "module": "src/index.js",
   "type": "module",
   "devDependencies": {
-    "@types/bun": "latest"
+    "@types/bun": "latest",
+    "@types/pg": "^8.15.5",
+    "drizzle-kit": "^0.31.4",
+    "tsx": "^4.20.5"
   },
   "peerDependencies": {
     "typescript": "^5"
