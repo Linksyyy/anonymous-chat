@@ -1,7 +1,8 @@
 "use client";
 import { useState } from "react";
-import { CiLogin, CiLogout } from "react-icons/ci";
+import { MdCancel, MdLogin } from "react-icons/md";
 import { login } from "../../lib/main";
+import Link from "next/link";
 
 export default function Login() {
   const [user, setUser] = useState("");
@@ -10,16 +11,18 @@ export default function Login() {
 
   async function handleSubmit(e) {
     e.preventDefault();
-    const funfou = await login(user, password);
-    if (funfou.error) return setError(funfou.message);
+    setUser(user.trim());
+    setPassword(password.trim());
+    const res = await login(user, password);
+    if (res.error) return setError(res.message);
     setError(null);
   }
 
   return (
-    <div className="fixed inset-0 bg-black/25 flex items-start justify-center pt-60 overflow-y-auto z-50">
+    <div className="fixed inset-0 flex items-center justify-center overflow-y-auto z-50">
       <form
         onSubmit={handleSubmit}
-        className="bg-secondary w-full max-w-md rounded-2xl p-8 flex flex-col"
+        className="bg-secondary w-full max-w-xl rounded-2xl p-8 flex flex-col"
       >
         {error && (
           <h1 className="text-red-400 justify-center flex">{error.message}</h1>
@@ -49,14 +52,16 @@ export default function Login() {
           />
         </div>
         <div className="flex justify-between mt-10">
-          <button className="bg-zinc-600 hover:bg-zinc-700 gap-2 font-bold py-2 px-4 rounded flex items-center">
-            <CiLogout /> Cancel
-          </button>
+          <Link href="/">
+            <button className="bg-zinc-600 hover:bg-zinc-700 gap-2 font-bold py-2 px-4 rounded flex items-center">
+              <MdCancel /> Cancel
+            </button>
+          </Link>
           <button
             type="submit"
             className="bg-green-600 hover:bg-green-700 gap-2 font-bold py-2 px-4 rounded flex items-center"
           >
-            Login <CiLogin />
+            Login <MdLogin />
           </button>
         </div>
       </form>
