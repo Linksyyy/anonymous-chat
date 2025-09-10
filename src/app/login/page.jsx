@@ -1,6 +1,7 @@
 "use client";
 import { useState } from "react";
 import { CiLogin, CiLogout } from "react-icons/ci";
+import { login } from "../../lib/main";
 
 export default function Login() {
   const [user, setUser] = useState("");
@@ -9,16 +10,8 @@ export default function Login() {
 
   async function handleSubmit(e) {
     e.preventDefault();
-
-    const res = await fetch("/api/login", {
-      method: "POST",
-      headers: {
-        "Content-Type": "application/json",
-      },
-      body: JSON.stringify({ username: user, password }),
-    });
-
-    if (res.status !== 200) return setError(await res.json());
+    const funfou = await login(user, password);
+    if (funfou.error) return setError(funfou.message);
     setError(null);
   }
 

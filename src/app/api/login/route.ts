@@ -1,16 +1,16 @@
 import { NextResponse } from "next/server";
 
-export async function POST(req) {
+export async function POST(req: Request) {
   const data = await req.json();
   if (data.username.trim() === "")
     return NextResponse.json(
       { message: "Username isn't defined" },
-      { status: 400 }
+      { status: 422 }
     );
   if (data.password.trim() === "")
     return NextResponse.json(
       { message: "password isn't defined" },
-      { status: 400 }
+      { status: 422 }
     );
 
   return NextResponse.json({ message: "Login successful" }, { status: 200 });
