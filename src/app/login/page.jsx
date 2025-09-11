@@ -2,43 +2,34 @@
 import { useState } from "react";
 import { MdCancel, MdLogin } from "react-icons/md";
 import { login } from "../../lib/main";
-import Link from "next/link";
-<<<<<<< Updated upstream
-=======
 import { useRouter } from "next/navigation";
->>>>>>> Stashed changes
+import Link from "next/link";
 
 export default function Login() {
-  const [user, setUser] = useState("");
+  const [username, setUsername] = useState("");
   const [password, setPassword] = useState("");
-<<<<<<< Updated upstream
-  const [error, setError] = useState(null);
-=======
   const [error, setError] = useState(false);
   const [log, setLog] = useState(null);
   const router = useRouter();
->>>>>>> Stashed changes
 
   async function handleSubmit(e) {
     e.preventDefault();
-    setUser(user.trim());
+    setError(false);
+    setUsername(username.trim());
     setPassword(password.trim());
-    const res = await login(user, password);
-<<<<<<< Updated upstream
-    if (res.error) return setError(res.message);
-    setError(null);
-=======
+    
+    const start = Date.now();
+    const res = await login(username, password);
     const end = Date.now();
     const latency = `${end - start} ms`;
 
     setError(res.hasError);
-    setLog({ ...res.message, latency });
+    setLog({ ...res, latency });
 
-    //cant use state error like conditional bc res is async
+    //cant use the state "error" like conditional bc res is async
     if (!res.hasError) {
       router.push("/");
     }
->>>>>>> Stashed changes
   }
 
   return (
@@ -48,7 +39,7 @@ export default function Login() {
         className="bg-secondary w-full max-w-md gap-10 rounded-2xl p-8 flex flex-col"
       >
         {error && (
-          <h1 className="text-red-400 justify-center flex">{error.message}</h1>
+          <h1 className="text-red-400 justify-center flex">{log.message}</h1>
         )}
         <h1 className="text-4xl p-1 justify-center flex mb-4 font-extrabold">
           Login
@@ -59,8 +50,8 @@ export default function Login() {
             autoFocus
             required
             type="text"
-            value={user}
-            onChange={(e) => setUser(e.target.value)}
+            value={username}
+            onChange={(e) => setUsername(e.target.value)}
             className="w-full p-2 text-lg bg-tertiary mt-1 h-10 rounded"
           />
         </div>
@@ -76,14 +67,10 @@ export default function Login() {
         </div>
         <div className="flex justify-between mt-10">
           <Link href="/">
-<<<<<<< Updated upstream
-            <button className="bg-zinc-600 hover:bg-zinc-700 gap-2 font-bold py-2 px-4 rounded flex items-center">
-=======
             <button
               type="button"
               className="bg-zinc-600 hover:bg-zinc-700 gap-2 font-bold py-2 px-4 rounded flex items-center"
             >
->>>>>>> Stashed changes
               <MdCancel /> Cancel
             </button>
           </Link>

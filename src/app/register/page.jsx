@@ -3,6 +3,7 @@ import Link from "next/link";
 import { useState } from "react";
 import { MdCancel, MdCreate } from "react-icons/md";
 import { register } from "../../lib/main";
+import { useRouter } from "next/navigation";
 
 export default function Register() {
   const [username, setUsername] = useState("");
@@ -10,13 +11,33 @@ export default function Register() {
   const [confPassword, setConfPassword] = useState("");
   const [error, setError] = useState(false);
   const [log, setLog] = useState(null);
+  const router = useRouter();
 
   async function handleSubmit(e) {
-    setError(false);
     e.preventDefault();
+    setError(false);
+    setUsername(username.trim());
+    setPassword(password.trim());
+    setConfPassword(confPassword.trim());
+
+    if (password !== confPassword) {
+      setError(true);
+      setLog({ message: "The password confirmation is diferent" });
+      return;
+    }
+
+    const start = Date.now();
     const res = await register(username, password);
+    const end = Date.now();
+    const latency = `${end - start} ms`;
+
     setError(res.hasError);
-    setLog(res.message);
+    setLog({ ...res, latency });
+
+    //cant use state error like conditional bc res is async
+    if (res.hasError === false) {
+      router.push("/login");
+    }
   }
 
   return (
