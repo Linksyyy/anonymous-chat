@@ -17,18 +17,15 @@ export default function Login() {
     setError(false);
     setUsername(username.trim());
     setPassword(password.trim());
-    
-    const start = Date.now();
+
     const res = await login(username, password);
-    const end = Date.now();
-    const latency = `${end - start} ms`;
 
     setError(res.hasError);
-    setLog({ ...res, latency });
+    setLog({ ...res });
 
     //cant use the state "error" like conditional bc res is async
     if (!res.hasError) {
-      router.push("/");
+      router.push("/lounge");
     }
   }
 

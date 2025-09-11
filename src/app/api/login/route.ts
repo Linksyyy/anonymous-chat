@@ -1,8 +1,7 @@
 import { NextRequest, NextResponse } from "next/server";
 import bcrypt from "bcryptjs";
 import { findUser } from "../../../db/queries";
-
-//const tokenKey = "auth-token";
+import { SignJWT, generateKeyPair, exportSPKI } from "jose";
 
 export async function POST(req: NextRequest) {
   const data = await req.json();
@@ -17,21 +16,35 @@ export async function POST(req: NextRequest) {
 
   const user = await findUser(username);
 
-  if (!user || user.length === 0)
+  if (user === undefined)
     return NextResponse.json(
       { message: "This user doesn't exist" },
       { status: 401 }
     );
 
-  if (await bcrypt.compare(password, user[0].password_hash)) {
-    const response = NextResponse.json(
-      { message: "Login successful" },
-      { status: 200 }
-    );
-    //response.cookies.set(tokenKey, "a", { httpOnly: true });
-
-    return response;
-  } else {
+  if (!(await bcrypt.compare(password, user.password_hash)))
     return NextResponse.json({ message: "Invalid password" }, { status: 401 });
-  }
+
+  const response = NextResponse.json(
+    { message: "Login successful" },
+    { status: 200 }
+  );
+
+  const { privateKey, publicKey } = await generateKeyPair("RS256");
+  const JWTtoken = await new SignJWT({ userId: user.id })
+    .setProtectedHeader({ alg: "RS256" })
+    .setExpirationTime("7d")
+    .sign(privateKey);
+
+  response.cookies.set("auth-token", JWTtoken, {
+    httpOnly: true,
+    sameSite: true,
+    secure: true,
+  });
+
+  const publicKeyPem = await exportSPKI(publicKey);
+
+  response.cookies.set("public-key", publicKeyPem);
+
+  return response;
 }

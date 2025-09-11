@@ -3,7 +3,8 @@ import { db } from "./db";
 import { users } from "./schemas";
 
 export async function findUser(username: string) {
-  return db.select().from(users).where(eq(users.username, username));
+  const result = await db.select().from(users).where(eq(users.username, username));
+  return result[0]
 }
 
 export async function registerUser(username: string, password_hash: string) {
