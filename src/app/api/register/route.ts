@@ -6,7 +6,7 @@ const saltRounds = 10;
 
 export async function POST(req: NextRequest) {
   const data = await req.json();
-  const username = data.username.trim();
+  const username = data.username.trim().toLowerCase();
   const password = data.password.trim();
 
   if (username === "" || password === "")

@@ -13,7 +13,7 @@ export async function findUser(username: string) {
 
 export async function registerUser(username: string, password_hash: string) {
   try {
-    const ee_salt = randomBytes(16).toHex();
+    const ee_salt = randomBytes(16).toString('hex');
     await db.insert(users).values({ username, password_hash, ee_salt });
   } catch (error) {
     throw new Error(error);
