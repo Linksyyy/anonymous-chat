@@ -26,7 +26,10 @@ export async function POST(req: NextRequest) {
     return NextResponse.json({ message: "Invalid password" }, { status: 401 });
 
   const response = NextResponse.json(
-    { message: "Login successful" },
+    {
+      message: "Login successful",
+      user: { id: user.id, username: user.username, ee_salt: user.ee_salt },
+    },
     { status: 200 }
   );
   const secret = new TextEncoder().encode(process.env.JWT_SECRET);
