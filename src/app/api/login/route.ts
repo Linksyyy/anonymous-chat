@@ -1,7 +1,7 @@
 import { NextRequest, NextResponse } from "next/server";
 import bcrypt from "bcryptjs";
 import { findUser } from "../../../db/queries";
-import { SignJWT, generateKeyPair, exportSPKI } from "jose";
+import { SignJWT } from "jose";
 
 export async function POST(req: NextRequest) {
   const data = await req.json();
@@ -16,7 +16,7 @@ export async function POST(req: NextRequest) {
 
   const user = await findUser(username);
 
-  if (user === undefined)
+  if (!user)
     return NextResponse.json(
       { message: "This user doesn't exist" },
       { status: 401 }
@@ -29,22 +29,17 @@ export async function POST(req: NextRequest) {
     { message: "Login successful" },
     { status: 200 }
   );
-
-  const { privateKey, publicKey } = await generateKeyPair("RS256");
+  const secret = new TextEncoder().encode(process.env.JWT_SECRET);
   const JWTtoken = await new SignJWT({ userId: user.id })
-    .setProtectedHeader({ alg: "RS256" })
+    .setProtectedHeader({ alg: "HS256" })
     .setExpirationTime("7d")
-    .sign(privateKey);
+    .sign(secret);
 
   response.cookies.set("auth-token", JWTtoken, {
     httpOnly: true,
     sameSite: true,
     secure: true,
   });
-
-  const publicKeyPem = await exportSPKI(publicKey);
-
-  response.cookies.set("public-key", publicKeyPem);
 
   return response;
 }

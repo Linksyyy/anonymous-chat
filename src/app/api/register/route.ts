@@ -17,7 +17,7 @@ export async function POST(req: NextRequest) {
 
   const user = await findUser(username);
 
-  if (user.length !== 0)
+  if (user)
     return NextResponse.json(
       { message: "This user already exist" },
       { status: 401 }
