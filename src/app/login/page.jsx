@@ -1,8 +1,8 @@
 "use client";
-import { useState } from "react";
+import { useEffect, useState } from "react";
 import { MdCancel, MdLogin } from "react-icons/md";
 import { login } from "../../lib/main";
-import { useRouter } from "next/navigation";
+import { useRouter, useSearchParams } from "next/navigation";
 import Link from "next/link";
 
 export default function Login() {
@@ -11,6 +11,22 @@ export default function Login() {
   const [error, setError] = useState(false);
   const [log, setLog] = useState(null);
   const router = useRouter();
+
+  const searchParams = useSearchParams();
+  const redirectError = searchParams.get("error");
+
+  useEffect(() => {
+    if (redirectError) {
+      switch (redirectError) {
+        case "token_expired":
+          setError(true);
+          setLog({ message: "Session expired" });
+          break;
+        default:
+          break;
+      }
+    }
+  }, [redirectError]);
 
   async function handleSubmit(e) {
     e.preventDefault();

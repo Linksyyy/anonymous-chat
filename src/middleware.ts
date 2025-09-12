@@ -16,10 +16,9 @@ export async function middleware(req: NextRequest) {
     await jwtVerify(token, secret)//if expired this fuction will throw an error
     return NextResponse.next();
   } catch (err) {
-    return NextResponse.json(
-      { message: "Token verification failed" },
-      { status: 401 }
-    );
+    const loginURL = new URL("/login", req.url)
+    loginURL.searchParams.set('error', 'token_expired')
+    return NextResponse.redirect(loginURL);
   }
 }
 
