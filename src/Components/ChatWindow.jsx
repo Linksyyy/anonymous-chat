@@ -37,8 +37,9 @@ export default function ChatWindow({ messages }) {
           className="flex items-center rounded-full bg-tertiary px-4 py-2"
         >
           <input
+            autoFocus
             type="text"
-            placeholder="type your message..."
+            placeholder="Type your message..."
             className="flex-1 bg-transparent outline-none"
           />
           <button

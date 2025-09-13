@@ -2,7 +2,7 @@
 import Link from "next/link";
 import { useState } from "react";
 import { MdCancel, MdCreate } from "react-icons/md";
-import { register } from "../../lib/main";
+import { register } from "../../lib/api";
 import { useRouter } from "next/navigation";
 
 export default function Register() {

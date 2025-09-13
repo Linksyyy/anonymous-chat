@@ -5,7 +5,7 @@ export async function GET(
   req: NextRequest,
   { params }: { params: { username: string } }
 ) {
-  const username = params.username.trim();
+  const username = (await params).username.trim();
   const user = await findUser(username);
   if (!user) {
     return NextResponse.json(

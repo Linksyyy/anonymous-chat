@@ -1,7 +1,7 @@
 "use client";
 import { useContext, useEffect, useState } from "react";
 import { MdCancel, MdLogin } from "react-icons/md";
-import { login } from "../../lib/main";
+import { login } from "../../lib/api";
 import { useRouter, useSearchParams } from "next/navigation";
 import Link from "next/link";
 import { deriveKeyFromPassword } from "../../lib/cryptography";
@@ -49,6 +49,7 @@ export default function Login() {
         res.user.ee_salt
       );
       keyManager.setKey(derivedKey);
+      keyManager.setUserId(res.user.id);
       router.push("/lounge");
     }
   }

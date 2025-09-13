@@ -1,10 +1,10 @@
-import ChatList from "../../Components/ChatsList";
+import ChatsList from "../../Components/ChatsList";
 
 export default function LoungeLayout({ children }) {
   return (
-    <section className="fixed inset-0 bg-primary">
-      <ChatList Chats={[{ name: "teste" }, { name: "teste" }]} />
-      <main className="ml-64 h-full">{children}</main>
+    <section className="fixed inset-0 bg-primary flex">
+      <ChatsList Chats={[{ name: "teste" }, { name: "teste" }]} />
+      <main className="h-full flex-1">{children}</main>
     </section>
   );
 }
