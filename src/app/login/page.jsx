@@ -1,9 +1,11 @@
 "use client";
-import { useEffect, useState } from "react";
+import { useContext, useEffect, useState } from "react";
 import { MdCancel, MdLogin } from "react-icons/md";
 import { login } from "../../lib/main";
 import { useRouter, useSearchParams } from "next/navigation";
 import Link from "next/link";
+import { deriveKeyFromPassword } from "../../lib/cryptography";
+import { keyContext } from "../../Components/KeyProvider";
 
 export default function Login() {
   const [username, setUsername] = useState("");
@@ -14,6 +16,7 @@ export default function Login() {
 
   const searchParams = useSearchParams();
   const redirectError = searchParams.get("error");
+  const keyManager = useContext(keyContext);
 
   useEffect(() => {
     if (redirectError) {
@@ -41,6 +44,11 @@ export default function Login() {
 
     //cant use the state "error" like conditional bc res is async
     if (!res.hasError) {
+      const derivedKey = await deriveKeyFromPassword(
+        password,
+        res.user.ee_salt
+      );
+      keyManager.setKey(derivedKey);
       router.push("/lounge");
     }
   }

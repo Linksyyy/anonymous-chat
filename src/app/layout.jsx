@@ -1,10 +1,11 @@
 import "../index.css";
+import KeyProvider from "../Components/KeyProvider";
 
 export default function RootLayout({ children }) {
   return (
     <html className="h-full">
       <body className="h-full bg-primary text-white">
-        {children}
+        <KeyProvider>{children}</KeyProvider>
       </body>
     </html>
   );
