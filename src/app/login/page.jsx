@@ -5,7 +5,7 @@ import { login } from "../../lib/main";
 import { useRouter, useSearchParams } from "next/navigation";
 import Link from "next/link";
 import { deriveKeyFromPassword } from "../../lib/cryptography";
-import { keyContext } from "../../Components/KeyProvider";
+import { keyContext } from "../../Contexts/KeyProvider";
 
 export default function Login() {
   const [username, setUsername] = useState("");

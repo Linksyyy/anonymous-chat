@@ -1,5 +1,5 @@
 import "../index.css";
-import KeyProvider from "../Components/KeyProvider";
+import KeyProvider from "../Contexts/KeyProvider";
 
 export default function RootLayout({ children }) {
   return (
