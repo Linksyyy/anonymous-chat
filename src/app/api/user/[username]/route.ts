@@ -7,6 +7,12 @@ export async function GET(
 ) {
   const username = params.username.trim();
   const user = await findUser(username);
+  if (!user) {
+    return NextResponse.json(
+      { message: "This user doesn't exist" },
+      { status: 401 }
+    );
+  }
   return NextResponse.json(
     { id: user.id, username: user.username },
     { status: 200 }
