@@ -16,3 +16,11 @@ export async function register(username: string, password: string) {
   if (res.status !== 200) return { ...(await res.json()), hasError: true };
   return { ...(await res.json()), hasError: false };
 }
+export async function getUser(username: string) {
+  const res = await fetch(`/api/user/${username.trim()}`, {
+    method: "GET",
+  });
+
+  if (res.status !== 200) return { ...(await res.json()), hasError: true };
+  return { ...(await res.json()), hasError: false };
+}
