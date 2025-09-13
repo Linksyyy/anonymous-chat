@@ -13,7 +13,7 @@ export async function deriveKeyFromPassword(password: string, saltHex: string) {
     ["deriveKey"]
   );
   return await window.crypto.subtle.deriveKey(
-    { name: "PBKDF2", salt: salt, iterations: 310000, hash: "SHA-256" },
+    { name: "PBKDF2", salt: salt, iterations: 310000, hash: "SHA-512" },
     baseKey,
     { name: "AES-GCM", length: 256 },
     true,
