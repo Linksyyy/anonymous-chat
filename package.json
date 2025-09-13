@@ -29,7 +29,6 @@
     "dev": "next dev --turbopack",
     "start": "next start",
     "build": "next build",
-    "build:css": "bunx tailwindcss -i ./src/index.css -m -o ./public/tailwind.css --watch",
     "db:push": "drizzle-kit push"
   },
   "eslintConfig": {
