@@ -1,3 +1,6 @@
+// All this file was designed to run only on browser to e2ee 
+// it only runs on browser because is used window.crypto
+
 export async function deriveKeyFromPassword(password: string, saltHex: string) {
   const salt = Uint8Array.from(
     saltHex.match(/.{1,2}/g).map((byte) => parseInt(byte, 16))
