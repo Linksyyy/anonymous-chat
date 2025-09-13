@@ -25,10 +25,12 @@ export const participants = pgTable("participants", {
   id: uuid().unique().primaryKey().defaultRandom(),
   user_id: uuid()
     .references(() => users.id)
-    .notNull(),
+    .notNull()
+    .unique(),
   chat_id: uuid()
     .references(() => chats.id)
-    .notNull(),
+    .notNull()
+    .unique(),
   joined_at: timestamp().defaultNow().notNull(),
 });
 
@@ -41,4 +43,5 @@ export const messages = pgTable("messages", {
     .references(() => chats.id)
     .notNull(),
   encrypted_message: text("encrypted_message").notNull(),
+  created_at: timestamp().defaultNow().notNull(),
 });
