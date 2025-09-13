@@ -40,7 +40,7 @@ export default function Login() {
     const res = await login(username, password);
 
     setError(res.hasError);
-    setLog({ ...res });
+    setLog(res);
 
     //cant use the state "error" like conditional bc res is async
     if (!res.hasError) {

@@ -26,13 +26,10 @@ export default function Register() {
       return;
     }
 
-    const start = Date.now();
     const res = await register(username, password);
-    const end = Date.now();
-    const latency = `${end - start} ms`;
 
     setError(res.hasError);
-    setLog({ ...res, latency });
+    setLog(res);
 
     //cant use state error like conditional bc res is async
     if (res.hasError === false) {
