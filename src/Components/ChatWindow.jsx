@@ -1,7 +1,9 @@
 "use client";
+import { useState } from "react";
 import { IoSend } from "react-icons/io5";
 
-export default function ChatWindow({ messages }) {
+export default function ChatWindow() {
+  const [messages] = useState([]);
   function handleSubmit(e) {
     e.preventDefault();
   }

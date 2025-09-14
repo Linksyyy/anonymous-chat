@@ -4,8 +4,8 @@ import { IoMdAddCircleOutline } from "react-icons/io";
 import { getUser } from "../lib/api";
 import { keyContext } from "../Contexts/KeyProvider";
 
-export default function ChatsList({ Chats }) {
-  const [chats, setChats] = useState(Chats);
+export default function ChatsList() {
+  const [chats, setChats] = useState([]);
   const [inputVisible, setInputVisible] = useState(false);
   const [searchUsername, setSearchUsername] = useState("");
   const [log, setLog] = useState("");
