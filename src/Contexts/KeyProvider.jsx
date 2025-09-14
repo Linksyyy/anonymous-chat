@@ -1,11 +1,14 @@
 "use client";
-import { createContext, useState } from "react";
+import { createContext, useContext, useState } from "react";
 
-export const keyContext = createContext();
+const keyContext = createContext();
 
-export default function KeyProvider({ children }) {
-  const [userId, setUserId] = useState(null);
+export function KeyProvider({ children }) {
   const [key, setKey] = useState(null);
-  const ctx = { key, setKey, userId, setUserId };
+  const ctx = { key, setKey };
   return <keyContext.Provider value={ctx}>{children}</keyContext.Provider>;
+}
+
+export function useKeyProvider() {
+  return useContext(keyContext);
 }

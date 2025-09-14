@@ -1,8 +1,9 @@
 "use client";
-import { useContext, useState } from "react";
+import { useEffect, useState } from "react";
 import { IoMdAddCircleOutline } from "react-icons/io";
 import { getUser } from "../lib/api";
-import { keyContext } from "../Contexts/KeyProvider";
+import { useActualUserProvider } from "../Contexts/ActualUserProvider";
+import { useActualOpenedChatProvider } from "../Contexts/ActualOpenedChatProvider";
 
 export default function ChatsList() {
   const [chats, setChats] = useState([]);
@@ -10,27 +11,39 @@ export default function ChatsList() {
   const [searchUsername, setSearchUsername] = useState("");
   const [log, setLog] = useState("");
   const [error, setError] = useState(false);
-  const { userId } = useContext(keyContext);
+
+  const actualUserManager = useActualUserProvider();
+  const actualOpenedChatManager = useActualOpenedChatProvider();
 
   function toggleCreate(e) {
     setSearchUsername("");
     setInputVisible(inputVisible ? false : true);
   }
+
   async function handleSearch(e) {
     setError(false);
     if (e.key === "Enter") {
-      const res = await getUser(searchUsername);
+      const res = await getUser(searchUsername.trim().toLocaleLowerCase());
       if (res.hasError) {
         setError(res.hasError);
         setLog(res.message);
-      } else if (res.id === userId) {
+      } else if (res.id === actualUserManager.id) {
         setError(true);
         setLog("This is you!");
       } else {
-        setChats([...chats, { name: res.username }]);
+        const { hasError, ...rest } = res;
+        setChats([rest, ...chats]);
       }
     }
   }
+
+  function handleChatClick(e, chat) {
+    actualOpenedChatManager.setUsername(chat.username);
+    actualOpenedChatManager.setId(chat.id);
+  }
+
+  useEffect(() => setError(false), [inputVisible]);
+
   return (
     <aside className="overflow-y-auto bg-primary border-r-1 border-secondary gap-2 flex h-full w-64 flex-col">
       <header className="bg-secondary p-4 flex flex-col gap-2">
@@ -57,12 +70,13 @@ export default function ChatsList() {
         {error && <p className="text-red-400 text-center text-sm">{log}</p>}
       </header>
       {chats.map((chat, index) => (
-        <div
+        <button
           key={index}
+          onClick={(e) => handleChatClick(e, chat)}
           className="bg-secondary hover:bg-tertiary p-2 mx-2 rounded-2xl cursor-pointer"
         >
-          {chat.name}
-        </div>
+          {chat.username}
+        </button>
       ))}
     </aside>
   );

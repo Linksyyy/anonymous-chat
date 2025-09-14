@@ -1,11 +1,12 @@
 "use client";
-import { useContext, useEffect, useState } from "react";
+import { useEffect, useState } from "react";
 import { MdCancel, MdLogin } from "react-icons/md";
 import { login } from "../../lib/api";
 import { useRouter, useSearchParams } from "next/navigation";
 import Link from "next/link";
 import { deriveKeyFromPassword } from "../../lib/cryptography";
-import { keyContext } from "../../Contexts/KeyProvider";
+import { useKeyProvider } from "../../Contexts/KeyProvider";
+import { useActualUserProvider } from "../../Contexts/ActualUserProvider";
 
 export default function Login() {
   const [username, setUsername] = useState("");
@@ -16,7 +17,8 @@ export default function Login() {
 
   const searchParams = useSearchParams();
   const redirectError = searchParams.get("error");
-  const keyManager = useContext(keyContext);
+  const keyManager = useKeyProvider();
+  const actualUserManager = useActualUserProvider();
 
   useEffect(() => {
     if (redirectError) {
@@ -48,8 +50,9 @@ export default function Login() {
         password,
         res.user.ee_salt
       );
+      actualUserManager.setUsername(res.user.username);
+      actualUserManager.setId(res.user.id);
       keyManager.setKey(derivedKey);
-      keyManager.setUserId(res.user.id);
       router.push("/lounge");
     }
   }
