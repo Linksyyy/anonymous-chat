@@ -1,3 +1,4 @@
+import { relations } from "drizzle-orm";
 import {
   pgTable,
   uuid,
@@ -25,12 +26,10 @@ export const participants = pgTable("participants", {
   id: uuid().unique().primaryKey().defaultRandom(),
   user_id: uuid()
     .references(() => users.id)
-    .notNull()
-    .unique(),
+    .notNull(),
   chat_id: uuid()
     .references(() => chats.id)
-    .notNull()
-    .unique(),
+    .notNull(),
   joined_at: timestamp().defaultNow().notNull(),
 });
 
@@ -45,3 +44,37 @@ export const messages = pgTable("messages", {
   encrypted_message: text("encrypted_message").notNull(),
   created_at: timestamp().defaultNow().notNull(),
 });
+// User -> Participant
+export const usersRelations = relations(users, ({ many }) => ({
+  participants: many(participants),
+}));
+
+// Chat -> Participants & Messages
+export const chatsRelations = relations(chats, ({ many }) => ({
+  participants: many(participants),
+  messages: many(messages),
+}));
+
+// Participant -> User & Chat
+export const participantsRelations = relations(participants, ({ one }) => ({
+  user: one(users, {
+    fields: [participants.user_id],
+    references: [users.id],
+  }),
+  chat: one(chats, {
+    fields: [participants.chat_id],
+    references: [chats.id],
+  }),
+}));
+
+// Message -> User & Chat
+export const messagesRelations = relations(messages, ({ one }) => ({
+  sender: one(users, {
+    fields: [messages.sender_id],
+    references: [users.id],
+  }),
+  chat: one(chats, {
+    fields: [messages.chat_id],
+    references: [chats.id],
+  }),
+}));
