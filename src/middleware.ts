@@ -1,27 +1,38 @@
 import { NextRequest, NextResponse } from "next/server";
 import { jwtVerify } from "jose";
 
+const publicRoutes = ["/", "/login", "/register"];
+
 export async function middleware(req: NextRequest) {
+  const { pathname } = req.nextUrl;
   const token = req.cookies.get("auth-token")?.value;
 
-  if (!token) {
-    return NextResponse.json(
-      { message: "Missing token" },
-      { status: 401 }
-    );
+  let isAuth = false;
+  if (token) {
+    try {
+      const secret = new TextEncoder().encode(process.env.JWT_SECRET);
+      await jwtVerify(token, secret);
+      isAuth = true;
+    } catch (error) {
+      isAuth = false;
+    }
   }
 
-  try {
-    const secret = new TextEncoder().encode(process.env.JWT_SECRET)
-    await jwtVerify(token, secret)//if expired this fuction will throw an error
+  if (isAuth) {
+    if (pathname === "/login") {
+      return NextResponse.redirect(new URL("/lounge", req.url));
+    }
     return NextResponse.next();
-  } catch (err) {
-    const loginURL = new URL("/login", req.url)
-    loginURL.searchParams.set('error', 'token_expired')
-    return NextResponse.redirect(loginURL);
   }
-}
 
-export const config = {
-  matcher: ["/lounge/:path*"],
-};
+  const isPublicRoute = publicRoutes.includes(pathname);
+  if (!isPublicRoute) {
+    const loginUrl = new URL("/login", req.url);
+    if (token) {
+      loginUrl.searchParams.set("error", "token_expired");
+    }
+    return NextResponse.redirect(loginUrl);
+  }
+
+  return NextResponse.next();
+}
