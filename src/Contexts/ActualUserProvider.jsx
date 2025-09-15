@@ -6,6 +6,7 @@ const ActualUserContext = createContext();
 export function ActualUserProvider({ children }) {
   const [id, setId] = useState(null);
   const [username, setUsername] = useState(null);
+  const [chats, setChats] = useState([]);
 
   useEffect(() => {
     const storedUser = localStorage.getItem("actualUser");
@@ -30,7 +31,14 @@ export function ActualUserProvider({ children }) {
     setUsername(newUsername);
   };
 
-  const ctx = { id, setId: updateId, username, setUsername: updateUsername };
+  const ctx = {
+    id,
+    setId: updateId,
+    username,
+    setUsername: updateUsername,
+    chats,
+    setChats,
+  };
 
   return (
     <ActualUserContext.Provider value={ctx}>

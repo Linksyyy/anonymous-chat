@@ -3,31 +3,24 @@ import { createChat, createParticipant } from "../../../db/queries";
 
 export async function POST(req: NextRequest) {
   const data = await req.json();
-  const { participantsIds } = data;
+  const { creatorId, title } = data;
 
-  if (!participantsIds) {
+  if (!creatorId) {
     return NextResponse.json({ message: "Missing users ids" }, { status: 400 });
   }
-  const validIds = participantsIds.filter((el) => el);
-  if (validIds.length !== participantsIds.length) {
+  if (title.trim() === "") {
     return NextResponse.json(
-      {
-        message:
-          "Error ocurred to validate your user data, please try login again",
-      },
+      { message: "Missing the title field" },
       { status: 400 }
     );
   }
 
-  const [chatCreated] = await createChat();
-  const participantsCreated = participantsIds.map(async (id: string) => {
-    return await createParticipant(id, chatCreated.id)[0];
-  });
+  const [chatCreated] = await createChat(title);
+  await createParticipant(creatorId, chatCreated.id);
 
   return NextResponse.json(
     {
       message: "Created sucessful",
-      participants: participantsCreated,
       chat: chatCreated,
     },
     { status: 200 }

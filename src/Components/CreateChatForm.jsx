@@ -1,18 +1,48 @@
+"use client";
+import { useState } from "react";
+import { postChat } from "../lib/api";
+import { useActualUserProvider } from "../Contexts/ActualUserProvider";
+
 export default function CreateChatForm({ toggleVisible }) {
+  const [title, setTitle] = useState("");
+  const [errorState, setErrorState] = useState({ hasError: false });
+
+  const actualUserManager = useActualUserProvider();
+  async function handleSubmit(e) {
+    e.preventDefault();
+    const { message, hasError } = await postChat(actualUserManager.id, title);
+    if (hasError) {
+      setErrorState({ hasError, message });
+      return;
+    }
+    toggleVisible();
+  }
+
   return (
     <div className="fixed inset-0 bg-black/75 flex items-center justify-center">
-      <form className="bg-primary flex flex-col p-5 rounded-4xl gap-5 px-15">
+      <form
+        onSubmit={handleSubmit}
+        className="bg-primary flex flex-col p-5 rounded-4xl gap-5 px-15"
+      >
         <h1 className="justify-center flex w-full text-2xl font-bold">
           Create chat
         </h1>
         <label>Name new chat</label>
-        <input autoFocus type="text" className="bg-secondary rounded-2xl p-1 outline-none px-5" />
+        <input
+          autoFocus
+          type="text"
+          value={title}
+          onChange={(e) => setTitle(e.target.value)}
+          className="bg-secondary rounded-2xl p-1 outline-none px-5"
+        />
+        {errorState.hasError && (
+          <h1 className="text-red-400 flex justify-center text-sm">
+            {errorState.message}
+          </h1>
+        )}
 
         <div className="w-full flex justify-evenly gap-4">
-          <button
-            onClick={toggleVisible}
-            className="bg-neutral-900 hover:bg-neutral-950 py-1 px-3 rounded-2xl"
-          >
+          <button className="bg-neutral-900 hover:bg-neutral-950 py-1 px-3 rounded-2xl">
             Cancel
           </button>
           <button

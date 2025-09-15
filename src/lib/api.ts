@@ -52,12 +52,12 @@ export async function getUser(username: string) {
 }
 
 export async function postChat(
-  participantsIds: string[],
+  creatorId: string,
   title: string = undefined
 ) {
   const res = await fetch("/api/chats", {
     method: "POST",
-    body: JSON.stringify({ participantsIds, title }),
+    body: JSON.stringify({ creatorId, title }),
   });
 
   let data;
