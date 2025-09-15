@@ -16,8 +16,13 @@ export default function ChatWindow() {
     <main className="h-full overflow-y-auto min-h-0 flex flex-col">
       {actualOpenedChatManager.id ? (
         <>
-          <header className="h-12 px-5 bg-secondary text-2xl items-center flex">
-            {actualOpenedChatManager.username}
+          <header className="h-auto px-5 bg-secondary text-2xl justify-between flex py-2 items-center">
+            {actualOpenedChatManager.title}
+            {/*DEBUG*/}
+            <h6 className="text-sm text-neutral-600 flex">
+              chat id: {actualOpenedChatManager.id}
+            </h6>
+            {/*DEBUG*/}
           </header>
           <div className="flex flex-col-reverse flex-1 gap-5 overflow-y-auto p-4">
             {messages.map((message, index) => (
@@ -60,7 +65,9 @@ export default function ChatWindow() {
           </footer>
         </>
       ) : (
-        <div className="h-full items-center flex justify-center text-neutral-500">There's nothing opened</div>
+        <div className="h-full items-center flex justify-center text-neutral-500">
+          There's nothing opened
+        </div>
       )}
     </main>
   );

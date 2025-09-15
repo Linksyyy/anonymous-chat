@@ -4,10 +4,10 @@ import { createContext, useContext, useState } from "react";
 const ActualOpenedContext = createContext();
 
 export function ActualOpenedChatProvider({ children }) {
-  const [username, setUsername] = useState("");
+  const [title, setTitle] = useState("");
   const [id, setId] = useState("");
 
-  const ctx = { id, setId, username, setUsername };
+  const ctx = { id, setId, title, setTitle };
   return (
     <ActualOpenedContext.Provider value={ctx}>
       {children}

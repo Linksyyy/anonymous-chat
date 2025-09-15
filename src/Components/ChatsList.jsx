@@ -4,10 +4,11 @@ import { IoMdAddCircleOutline } from "react-icons/io";
 import { postChat, getUser, getParticipationsOfUser } from "../lib/api";
 import { useActualUserProvider } from "../Contexts/ActualUserProvider";
 import { useActualOpenedChatProvider } from "../Contexts/ActualOpenedChatProvider";
+import CreateChatForm from "./CreateChatForm";
 
 export default function ChatsList() {
   const [chats, setChats] = useState([]);
-  const [inputVisible, setInputVisible] = useState(false);
+  const [createVisible, setCreateVisible] = useState(false);
   const [searchUsername, setSearchUsername] = useState("");
   const [errorState, setErrorState] = useState({
     hasError: false,
@@ -30,7 +31,7 @@ export default function ChatsList() {
 
   function toggleCreate(e) {
     setSearchUsername("");
-    setInputVisible(inputVisible ? false : true);
+    setCreateVisible(createVisible ? false : true);
   }
 
   async function handleSearch(e) {
@@ -61,29 +62,20 @@ export default function ChatsList() {
   }
 
   async function handleChatClick(e, chat) {
-    actualOpenedChatManager.setUsername(chat.username);
+    actualOpenedChatManager.setTitle(chat.title);
     actualOpenedChatManager.setId(chat.id);
   }
 
   useEffect(
     () => setErrorState({ hasError: false }),
-    [inputVisible, searchUsername]
+    [createVisible, searchUsername]
   );
 
   return (
     <aside className="overflow-y-auto bg-primary border-r-1 border-secondary gap-2 flex h-full w-64 flex-col">
       <header className="bg-secondary p-4 flex flex-col gap-2">
         <div className="flex items-center justify-center gap-2">
-          {inputVisible && (
-            <input
-              autoFocus
-              value={searchUsername}
-              onKeyDown={handleSearch}
-              onChange={(e) => setSearchUsername(e.target.value)}
-              className="bg-tertiary outline-none rounded px-2 py-1 text-white w-40"
-              placeholder="Enter username..."
-            />
-          )}
+          {createVisible && <CreateChatForm toggleVisible={toggleCreate} I/>}
           <div className="w-full justify-end flex">
             <button
               onClick={toggleCreate}
@@ -103,7 +95,11 @@ export default function ChatsList() {
         <button
           key={index}
           onClick={(e) => handleChatClick(e, chat)}
-          className="bg-secondary hover:bg-tertiary p-2 mx-2 rounded-2xl cursor-pointer"
+          className={`p-2 mx-2 rounded-2xl cursor-pointer ${
+            chat.id === actualOpenedChatManager.id
+              ? "bg-gray-800 hover:bg-gray-900"
+              : "bg-secondary hover:bg-tertiary"
+          }`}
         >
           {chat.title}
         </button>
