@@ -1,28 +1,89 @@
 import { NextResponse, NextRequest } from "next/server";
-import { createChat, createParticipant } from "../../../db/queries";
+import {
+  createChat,
+  createParticipant,
+  findParticipationsOfUser,
+  findChatByParticipants,
+} from "../../../db/queries";
 
-export async function POST(req: NextRequest) {
-  const data = await req.json();
-  const { creatorId, title } = data;
+export async function GET(req: NextRequest) { 
+  const authUserId = req.headers.get("x-user-id");
+  const userIdParam = req.nextUrl.searchParams.get("userId");
 
-  if (!creatorId) {
-    return NextResponse.json({ message: "Missing users ids" }, { status: 400 });
-  }
-  if (title.trim() === "") {
+  const targetUserId = userIdParam || authUserId;
+
+  if (!targetUserId) {
     return NextResponse.json(
-      { message: "Missing the title field" },
-      { status: 400 }
+      { message: "User ID not found" },
+      { status: 401 }
     );
   }
 
-  const [chatCreated] = await createChat(title);
-  await createParticipant(creatorId, chatCreated.id);
+  try {
+    const participations = await findParticipationsOfUser(targetUserId);
+    return NextResponse.json({ result: participations }, { status: 200 });
+  } catch (error) {
+    console.error("Error fetching user participations:", error);
+    return NextResponse.json(
+      { message: "Internal Server Error" },
+      { status: 500 }
+    );
+  }
+}
+
+export async function POST(req: NextRequest) {
+  const creatorId = req.headers.get("x-user-id");
+  const data = await req.json();
+  const { title, participantId } = data;
+
+  if (!creatorId) {
+    return NextResponse.json({ message: "Unauthorized" }, { status: 401 });
+  }
+
+  if (participantId) {
+    if (creatorId === participantId) {
+      return NextResponse.json(
+        { message: "Cannot create a chat with yourself" },
+        { status: 400 }
+      );
+    }
+
+    const existingChat = await findChatByParticipants(creatorId, participantId);
+    if (existingChat.length > 0) {
+      return NextResponse.json(
+        { message: "Chat already exists", chat: existingChat[0] },
+        { status: 200 }
+      );
+    }
+
+    const [chatCreated] = await createChat(`Chat between ${creatorId} and ${participantId}`);
+    await createParticipant(creatorId, chatCreated.id);
+    await createParticipant(participantId, chatCreated.id);
+
+    return NextResponse.json(
+      { message: "Created successfully", chat: chatCreated },
+      { status: 201 }
+    );
+  }
+
+  if (title) {
+    if (title.trim() === "") {
+      return NextResponse.json(
+        { message: "Missing the title field" },
+        { status: 400 }
+      );
+    }
+    const [chatCreated] = await createChat(title);
+    await createParticipant(creatorId, chatCreated.id);
+
+    return NextResponse.json(
+      { message: "Created successfully", chat: chatCreated },
+      { status: 201 }
+    );
+  }
 
   return NextResponse.json(
-    {
-      message: "Created sucessful",
-      chat: chatCreated,
-    },
-    { status: 200 }
+    { message: "Invalid request body. Provide 'participantId' or 'title'." },
+    { status: 400 }
   );
 }

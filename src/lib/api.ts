@@ -35,7 +35,7 @@ export async function register(username: string, password: string) {
 }
 
 export async function getUser(username: string) {
-  const res = await fetch(`/api/user/${username.trim()}`, {
+  const res = await fetch(`/api/users/${username.trim()}`, {
     method: "GET",
   });
 
@@ -51,10 +51,7 @@ export async function getUser(username: string) {
   return { ...data, hasError: false };
 }
 
-export async function postChat(
-  creatorId: string,
-  title: string = undefined
-) {
+export async function postChat(creatorId: string, title: string = undefined) {
   const res = await fetch("/api/chats", {
     method: "POST",
     body: JSON.stringify({ creatorId, title }),
@@ -73,7 +70,8 @@ export async function postChat(
 }
 
 export async function getParticipationsOfUser(userId: string) {
-  const res = await fetch(`/api/chats/${userId}`, {
+  const params = new URLSearchParams({ userId });
+  const res = await fetch(`/api/chats?${params}`, {
     method: "GET",
   });
 
