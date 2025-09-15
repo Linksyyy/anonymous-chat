@@ -9,8 +9,10 @@ export default function ChatsList() {
   const [chats, setChats] = useState([]);
   const [inputVisible, setInputVisible] = useState(false);
   const [searchUsername, setSearchUsername] = useState("");
-  const [log, setLog] = useState("");
-  const [error, setError] = useState(false);
+  const [errorState, setErrorState] = useState({
+    hasError: false,
+    message: "",
+  });
 
   const actualUserManager = useActualUserProvider();
   const actualOpenedChatManager = useActualOpenedChatProvider();
@@ -21,27 +23,28 @@ export default function ChatsList() {
   }
 
   async function handleSearch(e) {
-    setError(false);
     if (e.key === "Enter") {
       setSearchUsername("");
-      const searchResult = await getUser(
+      const { hasError, message, ...user } = await getUser(
         searchUsername.trim().toLocaleLowerCase()
       );
-      if (searchResult.hasError) {
-        setError(searchResult.hasError);
-        setLog(searchResult.message);
-      } else if (searchResult.id === actualUserManager.id) {
-        setError(true);
-        setLog("This is you!");
+      if (hasError) {
+        setErrorState({
+          hasError,
+          message,
+        });
+      } else if (user.id === actualUserManager.id) {
+        setErrorState({ hasError: true, message: "This is you!" });
       } else {
-        const { hasError, ...rest } = searchResult;
-        const createResult = await createChat([actualUserManager.id, rest.id]);
-        if (createResult.hasError) {
-          setError(createResult.hasError);
-          setLog(createResult.message);
+        const { hasError, message } = await createChat([
+          actualUserManager.id,
+          user.id,
+        ]);
+        if (hasError) {
+          setErrorState({ hasError, message });
           return;
         }
-        setChats([rest, ...chats]);
+        setChats([user, ...chats]);
       }
     }
   }
@@ -51,7 +54,7 @@ export default function ChatsList() {
     actualOpenedChatManager.setId(chat.id);
   }
 
-  useEffect(() => setError(false), [inputVisible]);
+  useEffect(() => setErrorState({ hasError: false }), [inputVisible, searchUsername]);
 
   return (
     <aside className="overflow-y-auto bg-primary border-r-1 border-secondary gap-2 flex h-full w-64 flex-col">
@@ -76,7 +79,11 @@ export default function ChatsList() {
             </button>
           </div>
         </div>
-        {error && <p className="text-red-400 text-center text-sm">{log}</p>}
+        {errorState.hasError && (
+          <p className="text-red-400 text-center text-sm">
+            {errorState.message}
+          </p>
+        )}
       </header>
       {chats.map((chat, index) => (
         <button

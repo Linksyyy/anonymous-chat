@@ -11,8 +11,10 @@ import { useActualUserProvider } from "../../Contexts/ActualUserProvider";
 export default function Login() {
   const [username, setUsername] = useState("");
   const [password, setPassword] = useState("");
-  const [error, setError] = useState(false);
-  const [log, setLog] = useState(null);
+  const [errorState, setErrorState] = useState({
+    hasError: false,
+    message: "",
+  });
   const router = useRouter();
 
   const searchParams = useSearchParams();
@@ -24,8 +26,7 @@ export default function Login() {
     if (redirectError) {
       switch (redirectError) {
         case "token_expired":
-          setError(true);
-          setLog({ message: "Session expired" });
+          setErrorState({ hasError: true, message: "Session expired" });
           break;
         default:
           break;
@@ -35,23 +36,21 @@ export default function Login() {
 
   async function handleSubmit(e) {
     e.preventDefault();
-    setError(false);
+    setErrorState({ hasError: false });
     setUsername(username.trim());
     setPassword(password.trim());
 
-    const res = await login(username, password);
-
-    setError(res.hasError);
-    setLog(res);
+    const { hasError, message, user } = await login(username, password);
+    setErrorState({ hasError, message });
 
     //cant use the state "error" like conditional bc res is async
-    if (!res.hasError) {
+    if (!hasError) {
       const derivedKey = await deriveKeyFromPassword(
         password,
-        res.user.ee_salt
+        user.ee_salt
       );
-      actualUserManager.setUsername(res.user.username);
-      actualUserManager.setId(res.user.id);
+      actualUserManager.setUsername(user.username);
+      actualUserManager.setId(user.id);
       keyManager.setKey(derivedKey);
       router.push("/lounge");
     }
@@ -63,8 +62,10 @@ export default function Login() {
         onSubmit={handleSubmit}
         className="bg-secondary w-full max-w-md gap-10 rounded-2xl p-8 flex flex-col"
       >
-        {error && (
-          <h1 className="text-red-400 justify-center flex">{log.message}</h1>
+        {errorState.hasError && (
+          <h1 className="text-red-400 justify-center flex">
+            {errorState.message}
+          </h1>
         )}
         <h1 className="text-4xl p-1 justify-center flex mb-4 font-extrabold">
           Login

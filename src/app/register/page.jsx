@@ -9,30 +9,32 @@ export default function Register() {
   const [username, setUsername] = useState("");
   const [password, setPassword] = useState("");
   const [confPassword, setConfPassword] = useState("");
-  const [error, setError] = useState(false);
-  const [log, setLog] = useState(null);
+  const [errorState, setErrorState] = useState({
+    hasError: false,
+    message: "",
+  });
   const router = useRouter();
 
   async function handleSubmit(e) {
     e.preventDefault();
-    setError(false);
+    setErrorState({ hasError: false });
     setUsername(username.trim());
     setPassword(password.trim());
     setConfPassword(confPassword.trim());
 
     if (password !== confPassword) {
-      setError(true);
-      setLog({ message: "The password confirmation is diferent" });
+      setErrorState({
+        hasError: true,
+        message: "The password confirmation is diferent",
+      });
       return;
     }
 
-    const res = await register(username, password);
-
-    setError(res.hasError);
-    setLog(res);
+    const { hasError, message } = await register(username, password);
+    setErrorState({ hasError, message });
 
     //cant use state error like conditional bc res is async
-    if (res.hasError === false) {
+    if (hasError === false) {
       router.push("/login");
     }
   }
@@ -43,8 +45,10 @@ export default function Register() {
         onSubmit={handleSubmit}
         className="bg-secondary w-full max-w-md gap-10 rounded-2xl p-8 flex flex-col"
       >
-        {error && (
-          <h1 className="text-red-400 justify-center flex">{log.message}</h1>
+        {errorState.hasError && (
+          <h1 className="text-red-400 justify-center flex">
+            {errorState.message}
+          </h1>
         )}
         <h1 className="text-4xl p-1 justify-center flex mb-4 font-extrabold">
           Register
