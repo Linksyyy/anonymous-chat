@@ -5,14 +5,19 @@ import { ActualOpenedChatProvider } from "../Contexts/ActualOpenedChatProvider";
 
 export default function RootLayout({ children }) {
   return (
-    <html className="h-full">
-      <body className="h-full bg-primary text-white">
-        <KeyProvider>
-          <ActualUserProvider>
-            <ActualOpenedChatProvider>{children}</ActualOpenedChatProvider>
-          </ActualUserProvider>
-        </KeyProvider>
-      </body>
-    </html>
+    <>
+      <head>
+        <title>Anonymous Chat</title>
+      </head>
+      <html className="h-full">
+        <body className="h-full bg-primary text-white">
+          <KeyProvider>
+            <ActualUserProvider>
+              <ActualOpenedChatProvider>{children}</ActualOpenedChatProvider>
+            </ActualUserProvider>
+          </KeyProvider>
+        </body>
+      </html>
+    </>
   );
 }
