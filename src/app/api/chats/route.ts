@@ -11,7 +11,10 @@ export async function POST(req: NextRequest) {
   const validIds = participantsIds.filter((el) => el);
   if (validIds.length !== participantsIds.length) {
     return NextResponse.json(
-      { message: "Error ocurred to validate your user data, please try login again" },
+      {
+        message:
+          "Error ocurred to validate your user data, please try login again",
+      },
       { status: 400 }
     );
   }

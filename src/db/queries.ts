@@ -23,6 +23,16 @@ export async function createParticipant(userId: string, chatId: string) {
     .returning();
 }
 
-export async function createChat(title: string = "") {
+export async function createChat(title: string = "Place Holder") {
   return await db.insert(chats).values({ title }).returning();
+}
+
+export async function findParticipationsOfUser(userId: string) {
+  const participations = await db.query.participants.findMany({
+    where: eq(participants.user_id, userId),
+    with: {
+      chat: true,
+    },
+  });
+  return participations;
 }

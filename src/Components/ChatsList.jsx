@@ -1,7 +1,7 @@
 "use client";
 import { useEffect, useState } from "react";
 import { IoMdAddCircleOutline } from "react-icons/io";
-import { createChat, getUser } from "../lib/api";
+import { postChat, getUser, getParticipationsOfUser } from "../lib/api";
 import { useActualUserProvider } from "../Contexts/ActualUserProvider";
 import { useActualOpenedChatProvider } from "../Contexts/ActualOpenedChatProvider";
 
@@ -16,6 +16,17 @@ export default function ChatsList() {
 
   const actualUserManager = useActualUserProvider();
   const actualOpenedChatManager = useActualOpenedChatProvider();
+
+  useEffect(() => {
+    if (!actualUserManager.id) {
+      return;
+    }
+    const find = async () => {
+      const res = await getParticipationsOfUser(actualUserManager.id);
+      setChats(res.result.map((participation) => participation.chat));
+    };
+    find();
+  }, [actualUserManager.id]);
 
   function toggleCreate(e) {
     setSearchUsername("");
@@ -36,7 +47,7 @@ export default function ChatsList() {
       } else if (user.id === actualUserManager.id) {
         setErrorState({ hasError: true, message: "This is you!" });
       } else {
-        const { hasError, message } = await createChat([
+        const { hasError, message, chat } = await postChat([
           actualUserManager.id,
           user.id,
         ]);
@@ -44,7 +55,7 @@ export default function ChatsList() {
           setErrorState({ hasError, message });
           return;
         }
-        setChats([user, ...chats]);
+        setChats([chat.chat, ...chats]);
       }
     }
   }
@@ -54,7 +65,10 @@ export default function ChatsList() {
     actualOpenedChatManager.setId(chat.id);
   }
 
-  useEffect(() => setErrorState({ hasError: false }), [inputVisible, searchUsername]);
+  useEffect(
+    () => setErrorState({ hasError: false }),
+    [inputVisible, searchUsername]
+  );
 
   return (
     <aside className="overflow-y-auto bg-primary border-r-1 border-secondary gap-2 flex h-full w-64 flex-col">
@@ -91,7 +105,7 @@ export default function ChatsList() {
           onClick={(e) => handleChatClick(e, chat)}
           className="bg-secondary hover:bg-tertiary p-2 mx-2 rounded-2xl cursor-pointer"
         >
-          {chat.username}
+          {chat.title}
         </button>
       ))}
     </aside>

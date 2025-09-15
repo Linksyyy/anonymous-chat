@@ -51,7 +51,7 @@ export async function getUser(username: string) {
   return { ...data, hasError: false };
 }
 
-export async function createChat(
+export async function postChat(
   participantsIds: string[],
   title: string = undefined
 ) {
@@ -59,7 +59,24 @@ export async function createChat(
     method: "POST",
     body: JSON.stringify({ participantsIds, title }),
   });
-  
+
+  let data;
+  try {
+    data = await res.json();
+  } catch (error) {
+    console.error(error);
+    return { message: "Unexpected error", hasError: true };
+  }
+
+  if (res.status !== 200) return { ...data, hasError: true };
+  return { ...data, hasError: false };
+}
+
+export async function getParticipationsOfUser(userId: string) {
+  const res = await fetch(`/api/chats/${userId}`, {
+    method: "GET",
+  });
+
   let data;
   try {
     data = await res.json();

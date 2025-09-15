@@ -9,7 +9,6 @@ export function ActualUserProvider({ children }) {
 
   useEffect(() => {
     const storedUser = localStorage.getItem("actualUser");
-    console.log(storedUser);
     if (storedUser) {
       const { id, username } = JSON.parse(storedUser);
       setId(id);
