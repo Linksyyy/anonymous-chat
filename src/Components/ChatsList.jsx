@@ -23,18 +23,25 @@ export default function ChatsList() {
   async function handleSearch(e) {
     setError(false);
     if (e.key === "Enter") {
-      const res = await getUser(searchUsername.trim().toLocaleLowerCase());
-      if (res.hasError) {
-        setError(res.hasError);
-        setLog(res.message);
-      } else if (res.id === actualUserManager.id) {
+      setSearchUsername("");
+      const searchResult = await getUser(
+        searchUsername.trim().toLocaleLowerCase()
+      );
+      if (searchResult.hasError) {
+        setError(searchResult.hasError);
+        setLog(searchResult.message);
+      } else if (searchResult.id === actualUserManager.id) {
         setError(true);
         setLog("This is you!");
       } else {
-        const { hasError, ...rest } = res;
+        const { hasError, ...rest } = searchResult;
+        const createResult = await createChat([actualUserManager.id, rest.id]);
+        if (createResult.hasError) {
+          setError(createResult.hasError);
+          setLog(createResult.message);
+          return;
+        }
         setChats([rest, ...chats]);
-        const cr = await createChat([actualUserManager.id, rest.id]);
-        console.log(cr, actualUserManager.id, rest.id);
       }
     }
   }

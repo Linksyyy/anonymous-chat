@@ -4,8 +4,16 @@ export async function login(username: string, password: string) {
     body: JSON.stringify({ username, password }),
   });
 
-  if (res.status !== 200) return { ...(await res.json()), hasError: true };
-  return { ...(await res.json()), hasError: false };
+  let data;
+  try {
+    data = await res.json();
+  } catch (error) {
+    console.error(error);
+    return { message: "Unexpected error", hasError: true };
+  }
+
+  if (res.status !== 200) return { ...data, hasError: true };
+  return { ...data, hasError: false };
 }
 
 export async function register(username: string, password: string) {
@@ -14,8 +22,16 @@ export async function register(username: string, password: string) {
     body: JSON.stringify({ username, password }),
   });
 
-  if (res.status !== 200) return { ...(await res.json()), hasError: true };
-  return { ...(await res.json()), hasError: false };
+  let data;
+  try {
+    data = await res.json();
+  } catch (error) {
+    console.error(error);
+    return { message: "Unexpected error", hasError: true };
+  }
+
+  if (res.status !== 200) return { ...data, hasError: true };
+  return { ...data, hasError: false };
 }
 
 export async function getUser(username: string) {
@@ -23,8 +39,16 @@ export async function getUser(username: string) {
     method: "GET",
   });
 
-  if (res.status !== 200) return { ...(await res.json()), hasError: true };
-  return { ...(await res.json()), hasError: false };
+  let data;
+  try {
+    data = await res.json();
+  } catch (error) {
+    console.error(error);
+    return { message: "Unexpected error", hasError: true };
+  }
+
+  if (res.status !== 200) return { ...data, hasError: true };
+  return { ...data, hasError: false };
 }
 
 export async function createChat(
@@ -35,7 +59,15 @@ export async function createChat(
     method: "POST",
     body: JSON.stringify({ participantsIds, title }),
   });
+  
+  let data;
+  try {
+    data = await res.json();
+  } catch (error) {
+    console.error(error);
+    return { message: "Unexpected error", hasError: true };
+  }
 
-  if (res.status !== 200) return { ...(await res.json()), hasError: true };
-  return { ...(await res.json()), hasError: false };
+  if (res.status !== 200) return { ...data, hasError: true };
+  return { ...data, hasError: false };
 }
