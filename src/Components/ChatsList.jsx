@@ -1,7 +1,7 @@
 "use client";
 import { useEffect, useState } from "react";
 import { IoMdAddCircleOutline } from "react-icons/io";
-import { getUser } from "../lib/api";
+import { createChat, getUser } from "../lib/api";
 import { useActualUserProvider } from "../Contexts/ActualUserProvider";
 import { useActualOpenedChatProvider } from "../Contexts/ActualOpenedChatProvider";
 
@@ -33,11 +33,13 @@ export default function ChatsList() {
       } else {
         const { hasError, ...rest } = res;
         setChats([rest, ...chats]);
+        const cr = await createChat([actualUserManager.id, rest.id]);
+        console.log(cr, actualUserManager.id, rest.id);
       }
     }
   }
 
-  function handleChatClick(e, chat) {
+  async function handleChatClick(e, chat) {
     actualOpenedChatManager.setUsername(chat.username);
     actualOpenedChatManager.setId(chat.id);
   }
