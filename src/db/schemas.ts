@@ -17,7 +17,7 @@ export const users = pgTable("users", {
 
 export const chats = pgTable("chats", {
   id: uuid().unique().primaryKey().defaultRandom(),
-  name: varchar({ length: 255 }),
+  title: varchar({ length: 255 }),
   created_at: timestamp().defaultNow().notNull(),
   updated_at: timestamp(),
 });

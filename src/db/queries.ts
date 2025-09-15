@@ -1,6 +1,6 @@
 import { eq } from "drizzle-orm";
 import { db } from "./db";
-import { users } from "./schemas";
+import { chats, participants, users } from "./schemas";
 import { randomBytes } from "crypto";
 
 export async function findUser(username: string) {
@@ -12,10 +12,17 @@ export async function findUser(username: string) {
 }
 
 export async function registerUser(username: string, password_hash: string) {
-  try {
-    const ee_salt = randomBytes(16).toString('hex');
-    await db.insert(users).values({ username, password_hash, ee_salt });
-  } catch (error) {
-    throw new Error(error);
-  }
+  const ee_salt = randomBytes(16).toString("hex");
+  await db.insert(users).values({ username, password_hash, ee_salt });
+}
+
+export async function createParticipant(userId: string, chatId: string) {
+  return await db
+    .insert(participants)
+    .values({ user_id: userId, chat_id: chatId })
+    .returning();
+}
+
+export async function createChat(title: string = "") {
+  return await db.insert(chats).values({ title }).returning();
 }
