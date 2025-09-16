@@ -1,4 +1,5 @@
 export default function ChatInfo({ chat, toggleVisible }) {
+  const date = new Date(Date.parse(chat.created_at));
   return (
     <div className="fixed inset-0 bg-black/75 flex items-center justify-center">
       <section className="bg-primary flex flex-col p-5 rounded-4xl gap-5 px-15 max-w-lg w-full">
@@ -13,7 +14,7 @@ export default function ChatInfo({ chat, toggleVisible }) {
 
         <dl className="space-y-2">
           <dt className="font-semibold">Created at:</dt>
-          <dd className="bg-secondary rounded-xl p-2">{chat.created_at}</dd>
+          <dd className="bg-secondary rounded-xl p-2">{date.toLocaleString('pt-BR')}</dd>
         </dl>
 
         <section className="bg-secondary rounded-2xl p-5">
@@ -33,12 +34,12 @@ export default function ChatInfo({ chat, toggleVisible }) {
           </ul>
         </section>
         <button
-            type="button"
-            onClick={toggleVisible}
-            className="bg-neutral-900 hover:bg-neutral-950 py-1 px-3 rounded-2xl"
-          >
-            Back
-          </button>
+          type="button"
+          onClick={toggleVisible}
+          className="bg-neutral-900 hover:bg-neutral-950 py-1 px-3 rounded-2xl"
+        >
+          Back
+        </button>
       </section>
     </div>
   );
