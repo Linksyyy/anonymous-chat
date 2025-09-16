@@ -43,7 +43,7 @@ export default function Register() {
     <div className="fixed inset-0 flex items-center justify-center overflow-y-auto z-50">
       <form
         onSubmit={handleSubmit}
-        className="bg-secondary w-full max-w-md gap-10 rounded-2xl p-8 flex flex-col"
+        className="bg-primary-1 w-full max-w-md gap-10 rounded-2xl p-8 flex flex-col"
       >
         {errorState.hasError && (
           <h1 className="text-red-400 justify-center flex">
@@ -61,7 +61,7 @@ export default function Register() {
             type="text"
             value={username}
             onChange={(e) => setUsername(e.target.value)}
-            className="w-full p-2 text-lg bg-tertiary mt-1 h-10 rounded"
+            className="w-full p-2 text-lg bg-primary-2 mt-1 h-10 rounded"
           />
         </div>
         <div>
@@ -71,7 +71,7 @@ export default function Register() {
             type="password"
             value={password}
             onChange={(e) => setPassword(e.target.value)}
-            className="w-full p-2 text-lg bg-tertiary mt-1 h-10 rounded"
+            className="w-full p-2 text-lg bg-primary-2 mt-1 h-10 rounded"
           />
         </div>
         <div>
@@ -81,7 +81,7 @@ export default function Register() {
             type="password"
             value={confPassword}
             onChange={(e) => setConfPassword(e.target.value)}
-            className="w-full p-2 text-lg bg-tertiary mt-1 h-10 rounded"
+            className="w-full p-2 text-lg bg-primary-2 mt-1 h-10 rounded"
           />
         </div>
         <div className="flex justify-between mt-10">

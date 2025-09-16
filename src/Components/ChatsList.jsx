@@ -39,8 +39,8 @@ export default function ChatsList() {
   }
 
   return (
-    <aside className="overflow-y-auto bg-primary border-r-1 border-secondary gap-2 flex h-full w-64 flex-col">
-      <header className="bg-secondary p-4 flex flex-col gap-2">
+    <aside className="overflow-y-auto bg-primary-0 border-r-1 border-primary-1 gap-2 flex h-full w-64 flex-col">
+      <header className="bg-primary-1 p-4 flex flex-col gap-2">
         <div className="flex items-center justify-center gap-2">
           {createVisible && <CreateChatForm toggleVisible={toggleCreate} I />}
           <div className="w-full justify-end flex">
@@ -56,21 +56,21 @@ export default function ChatsList() {
       {chats.map((chat, index) => (
         <div
           key={index}
-          className={`p-2 mx-2 rounded-2xl cursor-pointer flex group justify-evenly ${
+          className={`px-2 mx-2 rounded-2xl cursor-pointer flex relative group justify-evenly ${
             chat.id === actualOpenedChatManager.id
-              ? "bg-gray-800 hover:bg-gray-900"
-              : "bg-secondary hover:bg-tertiary"
+              ? "bg-secondary-0 hover:bg-secondary-1"
+              : "bg-primary-1 hover:bg-primary-2"
           }`}
         >
           <button
             onClick={(e) => handleChatClick(e, chat)}
-            className="w-8/10 cursor-pointer"
+            className="w-8/10 h-10 cursor-pointer"
           >
             {chat.title}
           </button>
           <button
             onClick={toggleChatInfo}
-            className="w-2/10 justify-center flex items-center opacity-0 group-hover:opacity-100 transition-opacity cursor-pointer hover:text-neutral-400"
+            className="w-2/10 absolute right-0 justify-center flex items-center opacity-0 group-hover:opacity-100 transition-opacity cursor-pointer hover:text-neutral-400"
           >
             <FaInfoCircle className="size-5" />
           </button>

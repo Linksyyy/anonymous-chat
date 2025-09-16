@@ -10,7 +10,7 @@ export default function RootLayout({ children }) {
         <title>Anonymous Chat</title>
       </head>
       <html className="h-full">
-        <body className="h-full bg-primary text-white">
+        <body className="h-full bg-primary-0 text-white">
           <KeyProvider>
             <ActualUserProvider>
               <ActualOpenedChatProvider>{children}</ActualOpenedChatProvider>

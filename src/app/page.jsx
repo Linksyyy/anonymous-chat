@@ -6,7 +6,7 @@ import { SiHackthebox } from "react-icons/si";
 export default function page() {
   return (
     <div className="inset-0 fixed justify-center items-center flex overflow-y-auto">
-      <div className="bg-secondary w-full max-w-2xl space-y-30 p-20 rounded-4xl flex flex-col justify-evenly">
+      <div className="bg-primary-1 w-full max-w-2xl space-y-30 p-20 rounded-4xl flex flex-col justify-evenly">
         <h1 className="justify-center items-center text-3xl font-extrabold flex gap-2">
           <SiHackthebox className="size-14" /> Welcome to anonymous chat!
         </h1>

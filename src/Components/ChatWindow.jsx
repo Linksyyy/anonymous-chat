@@ -16,7 +16,7 @@ export default function ChatWindow() {
     <main className="h-full overflow-y-auto min-h-0 flex flex-col">
       {actualOpenedChatManager.id ? (
         <>
-          <header className="h-auto px-5 bg-secondary text-2xl justify-between flex py-2 items-center">
+          <header className="h-auto px-5 bg-primary-1 text-2xl justify-between flex py-2 items-center">
             {actualOpenedChatManager.title}
             {/*DEBUG*/}
             <h6 className="text-sm text-neutral-600 flex">
@@ -36,7 +36,7 @@ export default function ChatWindow() {
                   className={`max-w-xs rounded-2xl px-4 py-2 lg:max-w-md ${
                     message.sendedByMe
                       ? "rounded-br-none bg-purple-950"
-                      : "rounded-bl-none bg-secondary"
+                      : "rounded-bl-none bg-primary-1"
                   }`}
                 >
                   {message.text}
@@ -47,7 +47,7 @@ export default function ChatWindow() {
           <footer className="p-2">
             <form
               onSubmit={handleSubmit}
-              className="flex items-center rounded-full bg-tertiary px-4 py-2"
+              className="flex items-center rounded-full bg-primary-2 px-4 py-2"
             >
               <input
                 autoFocus
@@ -57,7 +57,7 @@ export default function ChatWindow() {
               />
               <button
                 type="submit"
-                className="ml-2 flex h-8 w-8 items-center justify-center rounded-full bg-purple-950 text-white transition-colors hover:bg-purple-800 focus:outline-none focus:ring-2 focus:ring-purple-500"
+                className="ml-2 flex h-8 w-8 items-center justify-center rounded-full bg-secondary-0 text-white transition-colors hover:bg-secondary-1 focus:outline-none focus:ring-2"
               >
                 <IoSend />
               </button>

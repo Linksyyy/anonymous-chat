@@ -22,7 +22,7 @@ export default function CreateChatForm({ toggleVisible }) {
     <div className="fixed inset-0 bg-black/75 flex items-center justify-center">
       <form
         onSubmit={handleSubmit}
-        className="bg-primary flex flex-col p-5 rounded-4xl gap-5 px-15"
+        className="bg-primary-0 flex flex-col p-5 rounded-4xl gap-5 px-15"
       >
         <h1 className="justify-center flex w-full text-2xl font-bold">
           Create chat
@@ -33,7 +33,7 @@ export default function CreateChatForm({ toggleVisible }) {
           type="text"
           value={title}
           onChange={(e) => setTitle(e.target.value)}
-          className="bg-secondary rounded-2xl p-1 outline-none px-5"
+          className="bg-primary-1 rounded-2xl p-1 outline-none px-5"
         />
         {errorState.hasError && (
           <h1 className="text-red-400 flex justify-center text-sm">
