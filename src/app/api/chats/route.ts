@@ -76,7 +76,7 @@ export async function POST(req: NextRequest) {
 
     return NextResponse.json(
       { message: "Created successfully", chat: chatCreated },
-      { status: 201 }
+      { status: 200 }
     );
   }
 

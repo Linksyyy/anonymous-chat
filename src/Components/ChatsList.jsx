@@ -1,13 +1,16 @@
 "use client";
 import { useEffect, useState } from "react";
 import { IoMdAddCircleOutline } from "react-icons/io";
+import { FaInfoCircle } from "react-icons/fa";
 import { getParticipationsOfUser } from "../lib/api";
 import { useActualUserProvider } from "../Contexts/ActualUserProvider";
 import { useActualOpenedChatProvider } from "../Contexts/ActualOpenedChatProvider";
 import CreateChatForm from "./CreateChatForm";
+import ChatInfo from "./ChatInfo";
 
 export default function ChatsList() {
   const [createVisible, setCreateVisible] = useState(false);
+  const [chatInfoVisible, setChatInfoVisible] = useState(false);
 
   const { chats, id, setChats } = useActualUserProvider();
   const actualOpenedChatManager = useActualOpenedChatProvider();
@@ -25,6 +28,9 @@ export default function ChatsList() {
 
   function toggleCreate(e) {
     setCreateVisible(createVisible ? false : true);
+  }
+  function toggleChatInfo(e) {
+    setChatInfoVisible(chatInfoVisible ? false : true);
   }
 
   async function handleChatClick(e, chat) {
@@ -48,17 +54,30 @@ export default function ChatsList() {
         </div>
       </header>
       {chats.map((chat, index) => (
-        <button
+        <div
           key={index}
-          onClick={(e) => handleChatClick(e, chat)}
-          className={`p-2 mx-2 rounded-2xl cursor-pointer ${
+          className={`p-2 mx-2 rounded-2xl cursor-pointer flex group justify-evenly ${
             chat.id === actualOpenedChatManager.id
               ? "bg-gray-800 hover:bg-gray-900"
               : "bg-secondary hover:bg-tertiary"
           }`}
         >
-          {chat.title}
-        </button>
+          <button
+            onClick={(e) => handleChatClick(e, chat)}
+            className="w-8/10 cursor-pointer"
+          >
+            {chat.title}
+          </button>
+          <button
+            onClick={toggleChatInfo}
+            className="w-2/10 justify-center flex items-center opacity-0 group-hover:opacity-100 transition-opacity cursor-pointer hover:text-neutral-400"
+          >
+            <FaInfoCircle className="size-5" />
+          </button>
+          {chatInfoVisible && (
+            <ChatInfo chat={chat} toggleVisible={toggleChatInfo} />
+          )}
+        </div>
       ))}
     </aside>
   );

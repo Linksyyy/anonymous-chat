@@ -31,7 +31,19 @@ export async function findParticipationsOfUser(userId: string) {
   const participations = await db.query.participants.findMany({
     where: eq(participants.user_id, userId),
     with: {
-      chat: true,
+      chat: {
+        with: {
+          participants: {
+            with: {
+              user: {
+                columns: {
+                  password_hash: false,
+                },
+              },
+            },
+          },
+        },
+      },
     },
   });
   return participations;
