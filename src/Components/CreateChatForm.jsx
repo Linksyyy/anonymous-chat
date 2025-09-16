@@ -42,7 +42,11 @@ export default function CreateChatForm({ toggleVisible }) {
         )}
 
         <div className="w-full flex justify-evenly gap-4">
-          <button className="bg-neutral-900 hover:bg-neutral-950 py-1 px-3 rounded-2xl">
+          <button
+            type="button"
+            onClick={toggleVisible}
+            className="bg-neutral-900 hover:bg-neutral-950 py-1 px-3 rounded-2xl"
+          >
             Cancel
           </button>
           <button

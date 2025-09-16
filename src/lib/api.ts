@@ -55,6 +55,7 @@ export async function postChat(creatorId: string, title: string = undefined) {
   const res = await fetch("/api/chats", {
     method: "POST",
     body: JSON.stringify({ creatorId, title }),
+    headers: {"x-user-id": creatorId}
   });
 
   let data;

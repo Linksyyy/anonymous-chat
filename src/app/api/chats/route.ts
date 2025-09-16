@@ -6,17 +6,13 @@ import {
   findChatByParticipants,
 } from "../../../db/queries";
 
-export async function GET(req: NextRequest) { 
+export async function GET(req: NextRequest) {
   const authUserId = req.headers.get("x-user-id");
   const userIdParam = req.nextUrl.searchParams.get("userId");
-
   const targetUserId = userIdParam || authUserId;
 
   if (!targetUserId) {
-    return NextResponse.json(
-      { message: "User ID not found" },
-      { status: 401 }
-    );
+    return NextResponse.json({ message: "User ID not found" }, { status: 401 });
   }
 
   try {
@@ -56,13 +52,15 @@ export async function POST(req: NextRequest) {
       );
     }
 
-    const [chatCreated] = await createChat(`Chat between ${creatorId} and ${participantId}`);
+    const [chatCreated] = await createChat(
+      `Chat between ${creatorId} and ${participantId}`
+    );
     await createParticipant(creatorId, chatCreated.id);
     await createParticipant(participantId, chatCreated.id);
 
     return NextResponse.json(
       { message: "Created successfully", chat: chatCreated },
-      { status: 201 }
+      { status: 200 }
     );
   }
 
