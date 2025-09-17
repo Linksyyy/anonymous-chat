@@ -2,6 +2,7 @@
 import { useEffect, useState } from "react";
 import { IoMdAddCircleOutline, IoIosNotifications } from "react-icons/io";
 import { FaInfoCircle } from "react-icons/fa";
+import { TiGroup } from "react-icons/ti";
 import { getParticipationsOfUser } from "../lib/api";
 import { useActualUserProvider } from "../Contexts/ActualUserProvider";
 import { useActualOpenedChatProvider } from "../Contexts/ActualOpenedChatProvider";
@@ -13,6 +14,7 @@ export default function ChatsList() {
   const [createVisible, setCreateVisible] = useState(false);
   const [chatInfoVisible, setChatInfoVisible] = useState(false);
   const [notificationsVisible, setNotificationsVisible] = useState(false);
+  const [chatToSeeInfo, setChatToSeeInfo] = useState(null);
 
   const { chats, id, setChats } = useActualUserProvider();
   const actualOpenedChatManager = useActualOpenedChatProvider();
@@ -46,22 +48,22 @@ export default function ChatsList() {
             />
           )}
           <div className="w-full justify-between flex">
-              <button
-                onClick={() =>
+            <button
+              onClick={() =>
+                setNotificationsVisible(notificationsVisible ? false : true)
+              }
+              className="cursor-pointer text-white hover:text-gray-400"
+            >
+              <IoIosNotifications className="size-8" />
+            </button>
+            {notificationsVisible && (
+              <Notifications
+                toggleVisible={() =>
                   setNotificationsVisible(notificationsVisible ? false : true)
                 }
-                className="cursor-pointer text-white hover:text-gray-400"
-              >
-                <IoIosNotifications className="size-8" />
-              </button>
-              {notificationsVisible && (
-                <Notifications
-                  toggleVisible={() =>
-                    setNotificationsVisible(notificationsVisible ? false : true)
-                  }
-                  notifications
-                />
-              )}
+                notifications
+              />
+            )}
             <button
               onClick={() => setCreateVisible(createVisible ? false : true)}
               className="cursor-pointer text-white hover:text-gray-400"
@@ -82,19 +84,25 @@ export default function ChatsList() {
         >
           <button
             onClick={(e) => handleChatClick(e, chat)}
-            className="w-8/10 h-10 cursor-pointer"
+            className="w-8/10 h-10 cursor-pointer flex"
           >
-            {chat.title}
+            <TiGroup className="flex size-6 items-center h-full text-neutral-400" />
+            <h2 className="w-full items-center h-full text-sm justify-center truncate flex">
+              {chat.title}
+            </h2>
           </button>
           <button
-            onClick={() => setChatInfoVisible(chatInfoVisible ? false : true)}
+            onClick={() => {
+              setChatInfoVisible(chatInfoVisible ? false : true);
+              setChatToSeeInfo(chat);
+            }}
             className="w-2/10 absolute right-0 justify-center flex items-center opacity-0 group-hover:opacity-100 transition-opacity cursor-pointer hover:text-neutral-400"
           >
             <FaInfoCircle className="size-5" />
           </button>
           {chatInfoVisible && (
             <ChatInfo
-              chat={chat}
+              chat={chatToSeeInfo}
               toggleVisible={() =>
                 setChatInfoVisible(chatInfoVisible ? false : true)
               }

@@ -15,7 +15,7 @@ export default function ChatInfo({ chat, toggleVisible }) {
 
         <dl className="space-y-2">
           <dt className="font-semibold">Title:</dt>
-          <dd className="bg-primary-1 rounded-xl p-2">{chat.title}</dd>
+          <dd className="bg-primary-1 rounded-xl p-2 break-words">{chat.title}</dd>
         </dl>
 
         <dl className="space-y-2">
