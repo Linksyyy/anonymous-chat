@@ -34,8 +34,8 @@ export async function register(username: string, password: string) {
   return { ...data, hasError: false };
 }
 
-export async function getUser(username: string) {
-  const res = await fetch(`/api/users/${username.trim()}`, {
+export async function getUser(user_id: string) {
+  const res = await fetch(`/api/users/${user_id.trim()}`, {
     method: "GET",
   });
 
@@ -55,7 +55,7 @@ export async function postChat(creatorId: string, title: string = undefined) {
   const res = await fetch("/api/chats", {
     method: "POST",
     body: JSON.stringify({ creatorId, title }),
-    headers: {"x-user-id": creatorId}
+    headers: { "x-user-id": creatorId },
   });
 
   let data;
@@ -73,6 +73,47 @@ export async function postChat(creatorId: string, title: string = undefined) {
 export async function getParticipationsOfUser(userId: string) {
   const params = new URLSearchParams({ userId });
   const res = await fetch(`/api/chats?${params}`, {
+    method: "GET",
+  });
+
+  let data;
+  try {
+    data = await res.json();
+  } catch (error) {
+    console.error(error);
+    return { message: "Unexpected error", hasError: true };
+  }
+
+  if (res.status !== 200) return { ...data, hasError: true };
+  return { ...data, hasError: false };
+}
+
+export async function postChatInvite(
+  sender_id,
+  receiver_id,
+  chat_id,
+  type: "chat_invite"
+) {
+  const res = await fetch(`/api/chats/${chat_id}/invites`, {
+    body: JSON.stringify({ receiver_id, type }),
+    method: "POST",
+    headers: { "x-user-id": sender_id },
+  });
+
+  let data;
+  try {
+    data = await res.json();
+  } catch (error) {
+    console.error(error);
+    return { message: "Unexpected error", hasError: true };
+  }
+
+  if (res.status !== 200) return { ...data, hasError: true };
+  return { ...data, hasError: false };
+}
+
+export async function getNotificationsOfUser(user_id: string) {
+  const res = await fetch(`/api/users/${user_id}/notifications`, {
     method: "GET",
   });
 

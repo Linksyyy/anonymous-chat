@@ -10,6 +10,9 @@ import {
 } from "drizzle-orm/pg-core";
 
 export const rolesEnum = pgEnum("roles", ["guest", "admin"]);
+export const notificationsTypesEnum = pgEnum("notification_type", [
+  "chat_invite",
+]);
 
 export const users = pgTable("users", {
   id: uuid().unique().primaryKey().defaultRandom(),
@@ -48,9 +51,26 @@ export const messages = pgTable("messages", {
   encrypted_message: text("encrypted_message").notNull(),
   created_at: timestamp().defaultNow().notNull(),
 });
-// User -> Participant
+
+export const notifications = pgTable("notifications", {
+  id: uuid().unique().primaryKey().defaultRandom(),
+  sender_id: uuid().references(() => users.id),
+  receiver_id: uuid().references(() => users.id),
+  chat_id: uuid().references(() => chats.id),
+  type: notificationsTypesEnum().notNull(),
+  created_at: timestamp().defaultNow().notNull(),
+});
+// User -> Participant & notifications
 export const usersRelations = relations(users, ({ many }) => ({
   participants: many(participants),
+  notifications: many(notifications),
+}));
+
+export const notificationsRelations = relations(notifications, ({ one }) => ({
+  receiver: one(users, {
+    fields: [notifications.receiver_id],
+    references: [users.id],
+  }),
 }));
 
 // Chat -> Participants & Messages

@@ -3,10 +3,10 @@ import { findUser } from "../../../../db/queries";
 
 export async function GET(
   req: NextRequest,
-  { params }: { params: { username: string } }
+  { params }: { params: { user_id: string } }
 ) {
-  const username = (await params).username.trim();
-  const user = await findUser(username);
+  const user_id = (await params).user_id.trim();
+  const user = await findUser(user_id);
   if (!user) {
     return NextResponse.json(
       { message: "This user doesn't exist" },

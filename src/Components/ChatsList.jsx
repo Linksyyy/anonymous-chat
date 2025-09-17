@@ -3,7 +3,7 @@ import { useEffect, useState } from "react";
 import { IoMdAddCircleOutline, IoIosNotifications } from "react-icons/io";
 import { FaInfoCircle } from "react-icons/fa";
 import { TiGroup } from "react-icons/ti";
-import { getParticipationsOfUser } from "../lib/api";
+import { getNotificationsOfUser, getParticipationsOfUser } from "../lib/api";
 import { useActualUserProvider } from "../Contexts/ActualUserProvider";
 import { useActualOpenedChatProvider } from "../Contexts/ActualOpenedChatProvider";
 import CreateChatForm from "./CreateChatForm";
@@ -13,6 +13,7 @@ import Notifications from "./Notifications";
 export default function ChatsList() {
   const [createVisible, setCreateVisible] = useState(false);
   const [chatInfoVisible, setChatInfoVisible] = useState(false);
+  const [notifications, setNotifications] = useState([]);
   const [notificationsVisible, setNotificationsVisible] = useState(false);
   const [chatToSeeInfo, setChatToSeeInfo] = useState(null);
 
@@ -26,6 +27,9 @@ export default function ChatsList() {
     const find = async () => {
       const res = await getParticipationsOfUser(id);
       setChats(res.result.map((participation) => participation.chat));
+      const resNotf = await getNotificationsOfUser(id);
+      setNotifications(resNotf.notifications);
+      console.log(resNotf);
     };
     find();
   }, [id, setChats]);
@@ -61,7 +65,7 @@ export default function ChatsList() {
                 toggleVisible={() =>
                   setNotificationsVisible(notificationsVisible ? false : true)
                 }
-                notifications
+                notifications={notifications}
               />
             )}
             <button

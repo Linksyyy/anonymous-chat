@@ -1,6 +1,6 @@
 import { eq } from "drizzle-orm";
 import { db } from "./db";
-import { chats, participants, users } from "./schemas";
+import { chats, notifications, participants, users } from "./schemas";
 import { randomBytes } from "crypto";
 
 export async function findUser(username: string) {
@@ -27,8 +27,20 @@ export async function createParticipant(
     .returning();
 }
 
-export async function createChat(title: string = "Place Holder") {
+export async function createChat(title: string = "NO NAME") {
   return await db.insert(chats).values({ title }).returning();
+}
+
+export async function createInvite(
+  sender_id: string,
+  receiver_id: string,
+  chat_id: string,
+  type: "chat_invite"
+) {
+  return await db
+    .insert(notifications)
+    .values({ chat_id, sender_id, receiver_id, type })
+    .returning();
 }
 
 export async function findParticipationsOfUser(userId: string) {
@@ -43,6 +55,9 @@ export async function findParticipationsOfUser(userId: string) {
                 columns: {
                   password_hash: false,
                 },
+                with: {
+                  notifications: true,
+                },
               },
             },
           },
@@ -51,4 +66,11 @@ export async function findParticipationsOfUser(userId: string) {
     },
   });
   return participations;
+}
+
+export async function findNotificationsOfuser(user_id: string) {
+  return db
+    .select()
+    .from(notifications)
+    .where(eq(notifications.receiver_id, user_id));
 }
