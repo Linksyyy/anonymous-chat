@@ -1,8 +1,8 @@
 export default function ChatInfo({ chat, toggleVisible }) {
   const date = new Date(Date.parse(chat.created_at));
   return (
-    <div className="fixed inset-0 bg-black/75 flex items-center justify-center">
-      <section className="bg-primary-0 flex flex-col p-5 rounded-4xl gap-5 px-15 max-w-lg w-full">
+    <div className="fixed inset-0 bg-secondary-0/8 flex items-center justify-center z-1">
+      <section className="bg-primary-0 flex flex-col p-5 rounded-4xl gap-5 px-15 max-w-lg w-full ring-1 ring-primary-2">
         <header>
           <h1 className="text-2xl font-bold">Chat info</h1>
         </header>

@@ -19,10 +19,10 @@ export default function CreateChatForm({ toggleVisible }) {
   }
 
   return (
-    <div className="fixed inset-0 bg-black/75 flex items-center justify-center">
+    <div className="fixed inset-0 bg-secondary-0/16 flex items-center justify-center z-1">
       <form
         onSubmit={handleSubmit}
-        className="bg-primary-0 flex flex-col p-5 rounded-4xl gap-5 px-15"
+        className="bg-primary-0 flex flex-col p-5 rounded-4xl gap-5 px-15 ring-1 ring-primary-2"
       >
         <h1 className="justify-center flex w-full text-2xl font-bold">
           Create chat

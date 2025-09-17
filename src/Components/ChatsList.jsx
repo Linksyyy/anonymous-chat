@@ -56,7 +56,7 @@ export default function ChatsList() {
       {chats.map((chat, index) => (
         <div
           key={index}
-          className={`px-2 mx-2 rounded-2xl cursor-pointer flex relative group justify-evenly ${
+          className={`px-2 mx-2 rounded-2xl cursor-pointer flex relative group justify-evenly items-center ${
             chat.id === actualOpenedChatManager.id
               ? "bg-secondary-0 hover:bg-secondary-1"
               : "bg-primary-1 hover:bg-primary-2"
