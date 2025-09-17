@@ -6,7 +6,10 @@ import {
   char,
   timestamp,
   text,
+  pgEnum,
 } from "drizzle-orm/pg-core";
+
+export const rolesEnum = pgEnum("roles", ["guest", "admin"]);
 
 export const users = pgTable("users", {
   id: uuid().unique().primaryKey().defaultRandom(),
@@ -31,6 +34,7 @@ export const participants = pgTable("participants", {
     .references(() => chats.id)
     .notNull(),
   joined_at: timestamp().defaultNow().notNull(),
+  role: rolesEnum().default("guest"),
 });
 
 export const messages = pgTable("messages", {

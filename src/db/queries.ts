@@ -16,10 +16,14 @@ export async function registerUser(username: string, password_hash: string) {
   await db.insert(users).values({ username, password_hash, ee_salt });
 }
 
-export async function createParticipant(userId: string, chatId: string) {
+export async function createParticipant(
+  userId: string,
+  chatId: string,
+  role: "guest" | "admin" = "guest"
+) {
   return await db
     .insert(participants)
-    .values({ user_id: userId, chat_id: chatId })
+    .values({ user_id: userId, chat_id: chatId, role })
     .returning();
 }
 

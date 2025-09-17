@@ -3,7 +3,6 @@ import {
   createChat,
   createParticipant,
   findParticipationsOfUser,
-  findChatByParticipants,
 } from "../../../db/queries";
 
 export async function GET(req: NextRequest) {
@@ -30,38 +29,10 @@ export async function GET(req: NextRequest) {
 export async function POST(req: NextRequest) {
   const creatorId = req.headers.get("x-user-id");
   const data = await req.json();
-  const { title, participantId } = data;
+  const { title } = data;
 
   if (!creatorId) {
     return NextResponse.json({ message: "Unauthorized" }, { status: 401 });
-  }
-
-  if (participantId) {
-    if (creatorId === participantId) {
-      return NextResponse.json(
-        { message: "Cannot create a chat with yourself" },
-        { status: 400 }
-      );
-    }
-
-    const existingChat = await findChatByParticipants(creatorId, participantId);
-    if (existingChat.length > 0) {
-      return NextResponse.json(
-        { message: "Chat already exists", chat: existingChat[0] },
-        { status: 200 }
-      );
-    }
-
-    const [chatCreated] = await createChat(
-      `Chat between ${creatorId} and ${participantId}`
-    );
-    await createParticipant(creatorId, chatCreated.id);
-    await createParticipant(participantId, chatCreated.id);
-
-    return NextResponse.json(
-      { message: "Created successfully", chat: chatCreated },
-      { status: 200 }
-    );
   }
 
   if (title) {
@@ -72,7 +43,7 @@ export async function POST(req: NextRequest) {
       );
     }
     const [chatCreated] = await createChat(title);
-    await createParticipant(creatorId, chatCreated.id);
+    await createParticipant(creatorId, chatCreated.id, "admin");
 
     return NextResponse.json(
       { message: "Created successfully", chat: chatCreated },
