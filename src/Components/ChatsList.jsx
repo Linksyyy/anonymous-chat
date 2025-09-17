@@ -1,16 +1,18 @@
 "use client";
 import { useEffect, useState } from "react";
-import { IoMdAddCircleOutline } from "react-icons/io";
+import { IoMdAddCircleOutline, IoIosNotifications } from "react-icons/io";
 import { FaInfoCircle } from "react-icons/fa";
 import { getParticipationsOfUser } from "../lib/api";
 import { useActualUserProvider } from "../Contexts/ActualUserProvider";
 import { useActualOpenedChatProvider } from "../Contexts/ActualOpenedChatProvider";
 import CreateChatForm from "./CreateChatForm";
 import ChatInfo from "./ChatInfo";
+import Notifications from "./Notifications";
 
 export default function ChatsList() {
   const [createVisible, setCreateVisible] = useState(false);
   const [chatInfoVisible, setChatInfoVisible] = useState(false);
+  const [notificationsVisible, setNotificationsVisible] = useState(false);
 
   const { chats, id, setChats } = useActualUserProvider();
   const actualOpenedChatManager = useActualOpenedChatProvider();
@@ -26,13 +28,6 @@ export default function ChatsList() {
     find();
   }, [id, setChats]);
 
-  function toggleCreate(e) {
-    setCreateVisible(createVisible ? false : true);
-  }
-  function toggleChatInfo(e) {
-    setChatInfoVisible(chatInfoVisible ? false : true);
-  }
-
   async function handleChatClick(e, chat) {
     actualOpenedChatManager.setTitle(chat.title);
     actualOpenedChatManager.setId(chat.id);
@@ -42,10 +37,33 @@ export default function ChatsList() {
     <aside className="overflow-y-auto bg-primary-0 border-r-1 border-primary-1 gap-2 flex h-full w-64 flex-col">
       <header className="bg-primary-1 p-4 flex flex-col gap-2">
         <div className="flex items-center justify-center gap-2">
-          {createVisible && <CreateChatForm toggleVisible={toggleCreate} I />}
-          <div className="w-full justify-end flex">
+          {createVisible && (
+            <CreateChatForm
+              toggleVisible={() =>
+                setCreateVisible(createVisible ? false : true)
+              }
+              I
+            />
+          )}
+          <div className="w-full justify-between flex">
+              <button
+                onClick={() =>
+                  setNotificationsVisible(notificationsVisible ? false : true)
+                }
+                className="cursor-pointer text-white hover:text-gray-400"
+              >
+                <IoIosNotifications className="size-8" />
+              </button>
+              {notificationsVisible && (
+                <Notifications
+                  toggleVisible={() =>
+                    setNotificationsVisible(notificationsVisible ? false : true)
+                  }
+                  notifications
+                />
+              )}
             <button
-              onClick={toggleCreate}
+              onClick={() => setCreateVisible(createVisible ? false : true)}
               className="cursor-pointer text-white hover:text-gray-400"
             >
               <IoMdAddCircleOutline className="size-8" />
@@ -69,13 +87,18 @@ export default function ChatsList() {
             {chat.title}
           </button>
           <button
-            onClick={toggleChatInfo}
+            onClick={() => setChatInfoVisible(chatInfoVisible ? false : true)}
             className="w-2/10 absolute right-0 justify-center flex items-center opacity-0 group-hover:opacity-100 transition-opacity cursor-pointer hover:text-neutral-400"
           >
             <FaInfoCircle className="size-5" />
           </button>
           {chatInfoVisible && (
-            <ChatInfo chat={chat} toggleVisible={toggleChatInfo} />
+            <ChatInfo
+              chat={chat}
+              toggleVisible={() =>
+                setChatInfoVisible(chatInfoVisible ? false : true)
+              }
+            />
           )}
         </div>
       ))}
