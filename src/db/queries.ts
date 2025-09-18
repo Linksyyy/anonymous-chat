@@ -56,7 +56,7 @@ export async function findParticipationsOfUser(userId: string) {
                   password_hash: false,
                 },
                 with: {
-                  notifications: true,
+                  notificationsReceived: true,
                 },
               },
             },
@@ -65,12 +65,20 @@ export async function findParticipationsOfUser(userId: string) {
       },
     },
   });
+  console.log(participants);
   return participations;
 }
 
 export async function findNotificationsOfuser(user_id: string) {
-  return db
-    .select()
-    .from(notifications)
-    .where(eq(notifications.receiver_id, user_id));
+  return await db.query.notifications.findMany({
+    where: eq(notifications.receiver_id, user_id),
+    with: {
+      chat: true,
+      sender: {
+        columns: {
+          password_hash: false,
+        },
+      },
+    },
+  });
 }

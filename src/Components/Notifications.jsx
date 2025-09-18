@@ -15,10 +15,15 @@ export default function Notifications({ toggleVisible, notifications }) {
             <ul className="space-y-2">
               {notifications.map((notification, index) => (
                 <li key={index} className="p-2 rounded-lg hover:bg-primary-2">
-                  <p className="font-semibold">{notification.title}</p>
-                  <p className="text-sm text-gray-400">
-                    {notification.message}
-                  </p>
+                  {notification.type === "chat_invite" && (
+                    <>
+                      <p className="font-semibold">Chat invite</p>
+                      <p className="text-sm text-gray-400">
+                        The user {notification.sender.username} invited you to
+                        chat {notification.chat.title}
+                      </p>
+                    </>
+                  )}
                 </li>
               ))}
             </ul>
