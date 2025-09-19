@@ -29,7 +29,6 @@ export default function ChatsList() {
       setChats(res.result.map((participation) => participation.chat));
       const resNotf = await getNotificationsOfUser(id);
       setNotifications(resNotf.notifications);
-      console.log(resNotf);
     };
     find();
   }, [id, setChats]);
@@ -77,6 +76,12 @@ export default function ChatsList() {
           </div>
         </div>
       </header>
+      {chatInfoVisible && (
+        <ChatInfo
+          chat={chatToSeeInfo}
+          toggleVisible={() => setChatInfoVisible(chatInfoVisible ? false : true)}
+        />
+      )}
       {chats.map((chat, index) => (
         <div
           key={index}
@@ -104,14 +109,6 @@ export default function ChatsList() {
           >
             <FaInfoCircle className="size-5" />
           </button>
-          {chatInfoVisible && (
-            <ChatInfo
-              chat={chatToSeeInfo}
-              toggleVisible={() =>
-                setChatInfoVisible(chatInfoVisible ? false : true)
-              }
-            />
-          )}
         </div>
       ))}
     </aside>

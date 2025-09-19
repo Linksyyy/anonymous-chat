@@ -5,6 +5,6 @@ export async function GET(
   req: NextRequest,
   { params }: { params: { user_id: string } }
 ) {
-  const res = await findNotificationsOfuser(params.user_id);
+  const res = await findNotificationsOfuser((await params).user_id);
   return NextResponse.json({ notifications: res });
 }

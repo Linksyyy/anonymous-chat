@@ -65,7 +65,6 @@ export async function findParticipationsOfUser(userId: string) {
       },
     },
   });
-  console.log(participants);
   return participations;
 }
 

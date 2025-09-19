@@ -6,7 +6,7 @@ export async function POST(
   { params }: { params: { chat_id: string } }
 ) {
   const data = await req.json();
-  const chat_id = params.chat_id;
+  const chat_id = await params.chat_id;
   const sender_id = req.headers.get("x-user-id");
   const receiver_id = data.receiver_id;
   const type = data.type;

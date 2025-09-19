@@ -3,7 +3,7 @@ export default function ChatInfo({ chat, toggleVisible }) {
   return (
     <div
       onClick={toggleVisible}
-      className="fixed inset-0 bg-secondary-0/8 flex items-center justify-center z-1"
+      className="fixed inset-0 bg-secondary-0/16 flex items-center justify-center z-1"
     >
       <section
         onClick={(e) => e.stopPropagation()}
@@ -15,7 +15,9 @@ export default function ChatInfo({ chat, toggleVisible }) {
 
         <dl className="space-y-2">
           <dt className="font-semibold">Title:</dt>
-          <dd className="bg-primary-1 rounded-xl p-2 break-words">{chat.title}</dd>
+          <dd className="bg-primary-1 rounded-xl p-2 break-words">
+            {chat.title}
+          </dd>
         </dl>
 
         <dl className="space-y-2">
