@@ -17,14 +17,15 @@ socket.on("new_chat", (chat) => console.log(chat));
 export default function ChatsList() {
   const [createVisible, setCreateVisible] = useState(false);
   const [chatInfoVisible, setChatInfoVisible] = useState(false);
-  const [notifications, setNotifications] = useState([]);
   const [notificationsVisible, setNotificationsVisible] = useState(false);
   const [chatToSeeInfo, setChatToSeeInfo] = useState(null);
 
-  const { chats, id, setChats } = useActualUserProvider();
+  const { chats, id, setChats, notifications, setNotifications } =
+    useActualUserProvider();
   const actualOpenedChatManager = useActualOpenedChatProvider();
 
-  useEffect(() => { // first load
+  useEffect(() => {
+    // first load
     if (!id) {
       return;
     }
@@ -32,14 +33,11 @@ export default function ChatsList() {
       const res = await getParticipationsOfUser(id);
       setChats(res.result.map((participation) => participation.chat));
       const resNotf = await getNotificationsOfUser(id);
+      console.log(resNotf)
       setNotifications(resNotf.notifications);
     };
     find();
   }, [id, setChats]);
-
-  useSocket("created_chat", (chat) => { // reactivity
-    setChats([...chats, chat])
-  });
 
   async function handleChatClick(e, chat) {
     actualOpenedChatManager.setTitle(chat.title);

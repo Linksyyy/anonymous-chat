@@ -1,5 +1,6 @@
 "use client";
 import { createContext, useContext, useState, useEffect } from "react";
+import { useSocket } from "../lib/useSocket";
 
 const ActualUserContext = createContext();
 
@@ -7,6 +8,7 @@ export function ActualUserProvider({ children }) {
   const [id, setId] = useState(null);
   const [username, setUsername] = useState(null);
   const [chats, setChats] = useState([]);
+  const [notifications, setNotifications] = useState([]);
 
   useEffect(() => {
     const storedUser = localStorage.getItem("actualUser");
@@ -31,6 +33,14 @@ export function ActualUserProvider({ children }) {
     setUsername(newUsername);
   };
 
+  useSocket("created_chat", (chat) => {
+    setChats([...chats, chat]);
+  });
+  useSocket("created_notification", (notification) => {
+    console.log(notification)
+    setNotifications([...notifications, notification]);
+  });
+
   const ctx = {
     id,
     setId: updateId,
@@ -38,6 +48,8 @@ export function ActualUserProvider({ children }) {
     setUsername: updateUsername,
     chats,
     setChats,
+    notifications,
+    setNotifications,
   };
 
   return (

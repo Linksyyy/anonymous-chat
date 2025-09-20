@@ -4,10 +4,7 @@ import { chats, notifications, participants, users } from "./schemas";
 import { randomBytes } from "crypto";
 
 export async function findUser(id: string) {
-  const result = await db
-    .select()
-    .from(users)
-    .where(eq(users.id, id));
+  const result = await db.select().from(users).where(eq(users.id, id));
   return result[0];
 }
 
@@ -45,10 +42,22 @@ export async function createInvite(
   chat_id: string,
   type: "chat_invite"
 ) {
-  return await db
+  const notification = await db
     .insert(notifications)
     .values({ chat_id, sender_id, receiver_id, type })
     .returning();
+
+  return db.query.notifications.findFirst({
+    where: eq(notifications.id, notification[0].id),
+    with: {
+      chat: true,
+      sender: {
+        columns: {
+          password_hash: false,
+        },
+      },
+    },
+  });
 }
 
 export async function findParticipationsOfUser(userId: string) {

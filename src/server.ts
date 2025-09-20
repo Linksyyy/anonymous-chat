@@ -4,7 +4,15 @@ import cookie from "cookie";
 import next from "next";
 import { Server } from "socket.io";
 import { jwtVerify } from "jose";
-import { createChat, createParticipant, findUser } from "./db/queries";
+import {
+  createChat,
+  createInvite,
+  createParticipant,
+  findUser,
+  findUserByUsername,
+} from "./db/queries";
+
+const socketsMap = new Map();
 
 const dev = process.env.NODE_ENV !== "production";
 const app = next({ dev });
@@ -34,8 +42,9 @@ app.prepare().then(async () => {
 
   io.on("connection", async (socket) => {
     const user = await findUser((socket as any).userId);
+    socketsMap.set(user.id, socket.id);
 
-    console.log(`A user ${user.username} connected`);
+    console.log(`The user ${user.username} connected`);
 
     socket.on("new_chat", async (title) => {
       if (title.trim() !== "") {
@@ -46,6 +55,22 @@ app.prepare().then(async () => {
         socket.emit("created_chat", chatCreated);
       }
     });
+
+    socket.on("new_invite", async (username, chatId) => {
+      const userInvited = await findUserByUsername(username);
+      if (!userInvited) return;
+      const result = await createInvite(
+        user.id,
+        userInvited.id,
+        chatId,
+        "chat_invite"
+      );
+
+      socket
+        .to(socketsMap.get(userInvited.id))
+        .emit("created_notification", result);
+    });
+
     socket.on("join_chat", (chatId) => {
       socket.join(chatId);
       console.log(`User ${socket.id} joined chat ${chatId}`);

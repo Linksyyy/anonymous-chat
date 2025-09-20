@@ -1,5 +1,21 @@
+import { useState } from "react";
+import { BsPersonAdd } from "react-icons/bs";
+import { socket } from "../lib/socket";
+
 export default function ChatInfo({ chat, toggleVisible }) {
+  const [inviteSearchVisible, setInviteSearchVisible] = useState(false);
+  const [inviteValue, setInviteValue] = useState("");
+
   const date = new Date(Date.parse(chat.created_at));
+  function toggleInviteSearch() {
+    setInviteSearchVisible(inviteSearchVisible ? false : true);
+  }
+  function handleinviteParticipant(e) {
+    console.log(chat);
+    if (e.key === "Enter") {
+      socket.emit("new_invite", inviteValue, chat.id);
+    }
+  }
   return (
     <div
       onClick={toggleVisible}
@@ -28,7 +44,27 @@ export default function ChatInfo({ chat, toggleVisible }) {
         </dl>
 
         <section className="bg-primary-1 rounded-2xl p-5">
-          <h2 className="text-xl font-bold mb-3">Participants:</h2>
+          <div className="flex flex-col">
+            <div className="flex flex-row justify-between">
+              <h2 className="text-xl font-bold">Participants:</h2>
+              <button
+                onClick={toggleInviteSearch}
+                className="bg-green-600 hover:bg-green-700 hover:text-neutral-400 cursor-pointer  rounded-4xl h-8 w-8 flex items-center justify-center"
+              >
+                <BsPersonAdd className="size-5" />
+              </button>
+            </div>
+            {inviteSearchVisible && (
+              <input
+                autoFocus
+                value={inviteValue}
+                onChange={(e) => setInviteValue(e.target.value)}
+                onKeyDown={handleinviteParticipant}
+                placeholder="Send invite to..."
+                className="bg-primary-0 p-2 outline-none my-3 rounded-xl"
+              />
+            )}
+          </div>
           <ul className="space-y-3">
             {chat.participants.map((participant, index) => (
               <li
