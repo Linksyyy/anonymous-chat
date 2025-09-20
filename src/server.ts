@@ -4,7 +4,7 @@ import cookie from "cookie";
 import next from "next";
 import { Server } from "socket.io";
 import { jwtVerify } from "jose";
-import { findUser } from "./db/queries";
+import { createChat, createParticipant, findUser } from "./db/queries";
 
 const dev = process.env.NODE_ENV !== "production";
 const app = next({ dev });
@@ -33,19 +33,19 @@ app.prepare().then(async () => {
   });
 
   io.on("connection", async (socket) => {
-    const userId = (socket as any).userId;
-    let user;
-    if (userId) {
-      user = await findUser(userId);
-    }
+    const user = await findUser((socket as any).userId);
 
-    if (user) {
-      console.log(`A user ${user.username} connected`);
-    } else {
-      console.log("An anonymous user connected");
-    }
+    console.log(`A user ${user.username} connected`);
 
-    socket.on("new_chat", (title) => {});
+    socket.on("new_chat", async (title) => {
+      if (title.trim() !== "") {
+        const [chatCreated] = await createChat(title);
+        await createParticipant(user.id, chatCreated.id, "admin");
+        console.log(`User ${user.username} created ${chatCreated.title}`);
+
+        socket.emit("created_chat", chatCreated);
+      }
+    });
     socket.on("join_chat", (chatId) => {
       socket.join(chatId);
       console.log(`User ${socket.id} joined chat ${chatId}`);

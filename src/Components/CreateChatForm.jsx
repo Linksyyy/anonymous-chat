@@ -2,6 +2,7 @@
 import { useState } from "react";
 import { postChat } from "../lib/api";
 import { useActualUserProvider } from "../Contexts/ActualUserProvider";
+import { socket } from "../lib/socket";
 
 export default function CreateChatForm({ toggleVisible }) {
   const [title, setTitle] = useState("");
@@ -10,11 +11,7 @@ export default function CreateChatForm({ toggleVisible }) {
   const actualUserManager = useActualUserProvider();
   async function handleSubmit(e) {
     e.preventDefault();
-    const { message, hasError } = await postChat(actualUserManager.id, title);
-    if (hasError) {
-      setErrorState({ hasError, message });
-      return;
-    }
+    socket.emit("new_chat", title);
     toggleVisible();
   }
 

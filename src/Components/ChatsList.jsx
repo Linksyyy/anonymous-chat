@@ -9,6 +9,10 @@ import { useActualOpenedChatProvider } from "../Contexts/ActualOpenedChatProvide
 import CreateChatForm from "./CreateChatForm";
 import ChatInfo from "./ChatInfo";
 import Notifications from "./Notifications";
+import { socket } from "../lib/socket";
+import { useSocket } from "../lib/useSocket";
+
+socket.on("new_chat", (chat) => console.log(chat));
 
 export default function ChatsList() {
   const [createVisible, setCreateVisible] = useState(false);
@@ -20,7 +24,7 @@ export default function ChatsList() {
   const { chats, id, setChats } = useActualUserProvider();
   const actualOpenedChatManager = useActualOpenedChatProvider();
 
-  useEffect(() => {
+  useEffect(() => { // first load
     if (!id) {
       return;
     }
@@ -32,6 +36,10 @@ export default function ChatsList() {
     };
     find();
   }, [id, setChats]);
+
+  useSocket("created_chat", (chat) => { // reactivity
+    setChats([...chats, chat])
+  });
 
   async function handleChatClick(e, chat) {
     actualOpenedChatManager.setTitle(chat.title);
@@ -79,7 +87,9 @@ export default function ChatsList() {
       {chatInfoVisible && (
         <ChatInfo
           chat={chatToSeeInfo}
-          toggleVisible={() => setChatInfoVisible(chatInfoVisible ? false : true)}
+          toggleVisible={() =>
+            setChatInfoVisible(chatInfoVisible ? false : true)
+          }
         />
       )}
       {chats.map((chat, index) => (
