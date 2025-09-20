@@ -2,8 +2,6 @@ import "../index.css";
 import { KeyProvider } from "../Contexts/KeyProvider";
 import { ActualUserProvider } from "../Contexts/ActualUserProvider";
 import { ActualOpenedChatProvider } from "../Contexts/ActualOpenedChatProvider";
-import { useEffect } from "react";
-import { socket } from "../lib/socket";
 
 export default function RootLayout({ children }) {
   return (

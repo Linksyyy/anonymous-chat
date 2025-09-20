@@ -1,5 +1,7 @@
 "use client";
+import { useEffect } from "react";
 import ChatsList from "../../Components/ChatsList";
+import { socket } from "../../lib/socket";
 
 export default function LoungeLayout({ children }) {
   useEffect(() => {
