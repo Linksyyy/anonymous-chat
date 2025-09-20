@@ -3,7 +3,15 @@ import { db } from "./db";
 import { chats, notifications, participants, users } from "./schemas";
 import { randomBytes } from "crypto";
 
-export async function findUser(username: string) {
+export async function findUser(id: string) {
+  const result = await db
+    .select()
+    .from(users)
+    .where(eq(users.id, id));
+  return result[0];
+}
+
+export async function findUserByUsername(username: string) {
   const result = await db
     .select()
     .from(users)

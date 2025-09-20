@@ -1,5 +1,5 @@
 import { NextRequest, NextResponse } from "next/server";
-import { findUser, registerUser } from "../../../db/queries";
+import { findUserByUsername, registerUser } from "../../../db/queries";
 import bcrypt from "bcryptjs";
 
 const saltRounds = 10;
@@ -15,7 +15,7 @@ export async function POST(req: NextRequest) {
       { status: 422 }
     );
 
-  const user = await findUser(username);
+  const user = await findUserByUsername(username);
 
   if (user)
     return NextResponse.json(

@@ -1,6 +1,6 @@
 import { NextRequest, NextResponse } from "next/server";
 import bcrypt from "bcryptjs";
-import { findUser } from "../../../db/queries";
+import { findUserByUsername } from "../../../db/queries";
 import { SignJWT } from "jose";
 
 export async function POST(req: NextRequest) {
@@ -14,7 +14,7 @@ export async function POST(req: NextRequest) {
       { status: 422 }
     );
 
-  const user = await findUser(username);
+  const user = await findUserByUsername(username);
 
   if (!user)
     return NextResponse.json(
