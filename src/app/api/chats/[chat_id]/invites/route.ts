@@ -3,10 +3,10 @@ import { createInvite } from "../../../../../db/queries";
 
 export async function POST(
   req: NextRequest,
-  { params }: { params: { chat_id: string } }
+  { params }
 ) {
   const data = await req.json();
-  const chat_id = await params.chat_id;
+  const chat_id = params.chat_id;
   const sender_id = req.headers.get("x-user-id");
   const receiver_id = data.receiver_id;
   const type = data.type;

@@ -1,9 +1,22 @@
+'use client'
 import "../index.css";
 import { KeyProvider } from "../Contexts/KeyProvider";
 import { ActualUserProvider } from "../Contexts/ActualUserProvider";
 import { ActualOpenedChatProvider } from "../Contexts/ActualOpenedChatProvider";
+import { useEffect } from "react";
+import { socket } from "../lib/socket";
 
 export default function RootLayout({ children }) {
+  useEffect(() => {
+    socket.on("connect", () => {
+      console.log("Connected to socket.io server");
+    });
+
+    return () => {
+      socket.off("connect");
+    };
+  }, []);
+
   return (
     <>
       <head>
