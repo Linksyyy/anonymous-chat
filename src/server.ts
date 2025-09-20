@@ -4,31 +4,47 @@ import cookie from "cookie";
 import next from "next";
 import { Server } from "socket.io";
 import { jwtVerify } from "jose";
+import { findUser } from "./db/queries";
 
 const dev = process.env.NODE_ENV !== "production";
 const app = next({ dev });
 const handle = app.getRequestHandler();
 
-app.prepare().then(() => {
+app.prepare().then(async () => {
   const server = createServer((req, res) => {
     const parsedUrl = parse(req.url!, true);
     handle(req, res, parsedUrl);
   });
 
   const io = new Server(server);
-  io.use((socket, next) => {
+  io.use(async (socket, next) => {
     try {
       const cookies = socket.handshake.headers.cookie;
-      const token = cookie.parse(cookies)["auth-token"];
-      const secret = new TextEncoder().encode(process.env.JWT_SECRET);
-      jwtVerify(token, secret);
-      next();
-    } catch (e) {
-      console.log(e)
-    }
+      if (cookies) {
+        const token = cookie.parse(cookies)["auth-token"];
+        if (token) {
+          const secret = new TextEncoder().encode(process.env.JWT_SECRET);
+          const { payload } = await jwtVerify(token, secret);
+          (socket as any).userId = String(payload.userId);
+        }
+      }
+    } catch (e) {}
+    next();
   });
-  io.on("connection", (socket) => {
-    console.log("A user connected");
+
+  io.on("connection", async (socket) => {
+    const userId = (socket as any).userId;
+    let user;
+    if (userId) {
+      user = await findUser(userId);
+    }
+
+    if (user) {
+      console.log(`A user ${user.username} connected`);
+    } else {
+      console.log("An anonymous user connected");
+    }
+
     socket.on("new_chat", (title) => {});
     socket.on("join_chat", (chatId) => {
       socket.join(chatId);
@@ -48,7 +64,11 @@ app.prepare().then(() => {
     });
 
     socket.on("disconnect", () => {
-      console.log("A user disconnected");
+      if (user) {
+        console.log(`A user ${user.username} disconnected`);
+      } else {
+        console.log("An anonymous user disconnected");
+      }
     });
   });
 

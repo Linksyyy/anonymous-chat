@@ -29,9 +29,9 @@
     "web-vitals": "^2.1.4"
   },
   "scripts": {
-    "dev": "tsx watch src/server.ts",
+    "dev": "tsx watch --env-file=.env src/server.ts",
     "build": "next build",
-    "start": "NODE_ENV=production tsx src/server.ts",
+    "start": "NODE_ENV=production tsx --env-file=.env src/server.ts",
     "db:push": "drizzle-kit push"
   },
   "eslintConfig": {
