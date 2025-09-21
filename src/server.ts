@@ -8,6 +8,7 @@ import {
   createChat,
   createInvite,
   createParticipant,
+  deleteNotification,
   findUser,
   findUserByUsername,
 } from "./db/queries";
@@ -52,7 +53,7 @@ app.prepare().then(async () => {
         await createParticipant(user.id, chatCreated.id, "admin");
         console.log(`User ${user.username} created ${chatCreated.title}`);
 
-        socket.emit("created_chat", chatCreated);
+        socket.emit("added_chat", chatCreated);
       }
     });
 
@@ -69,6 +70,15 @@ app.prepare().then(async () => {
       socket
         .to(socketsMap.get(userInvited.id))
         .emit("created_notification", result);
+    });
+
+    socket.on("accept_invite", async (notification) => {
+      console.log(notification);
+      await deleteNotification(notification.id);
+      await createParticipant(user.id, notification.chat_id, "guest");
+
+      socket.emit("added_chat", notification.chat);
+      socket.emit("delete_notification", notification.id);
     });
 
     socket.on("join_chat", (chatId) => {

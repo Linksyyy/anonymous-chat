@@ -33,12 +33,14 @@ export function ActualUserProvider({ children }) {
     setUsername(newUsername);
   };
 
-  useSocket("created_chat", (chat) => {
+  useSocket("added_chat", (chat) => {
     setChats([...chats, chat]);
   });
   useSocket("created_notification", (notification) => {
-    console.log(notification)
     setNotifications([...notifications, notification]);
+  });
+  useSocket("delete_notification", (notfId) => {
+    setNotifications(notifications.filter((el) => el.id !== notfId));
   });
 
   const ctx = {

@@ -98,3 +98,7 @@ export async function findNotificationsOfuser(user_id: string) {
     },
   });
 }
+
+export async function deleteNotification(id: string) {
+  await db.delete(notifications).where(eq(notifications.id, id));
+}
