@@ -82,10 +82,13 @@ export default function ChatInfo({ chat, toggleVisible }) {
                 key={index}
                 className="bg-primary-2 p-3 rounded-2xl text-sm flex justify-between items-center"
               >
-                <span>{participant.user.username}</span>
-                {participant.role && (
-                  <span className="text-xs opacity-75">{participant.role}</span>
-                )}
+                <div className="gap-2 flex items-center">
+                  <span>{participant.user.username}</span>
+                  {participant.user_id === id && (
+                    <h6 className="text-blue-800">(you)</h6>
+                  )}
+                </div>
+                <span className="text-xs opacity-75">{participant.role}</span>
               </li>
             ))}
           </ul>
