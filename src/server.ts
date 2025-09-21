@@ -13,6 +13,7 @@ import {
   findUser,
   findUserByUsername,
 } from "./db/queries";
+import { notifications } from "./db/schemas";
 
 const socketsMap = new Map();
 
@@ -74,11 +75,17 @@ app.prepare().then(async () => {
     });
 
     socket.on("accept_invite", async (notification) => {
-      console.log(notification);
       await deleteNotification(notification.id);
       await createParticipant(user.id, notification.chat_id, "guest");
+      const chatData = await findChat(notification.chat.id);
 
-      socket.emit("added_chat", notification.chat);
+      socket.emit("added_chat", chatData);
+      socket.emit("delete_notification", notification.id);
+    });
+
+    socket.on("deny_invite", async (notification) => {
+      await deleteNotification(notification.id);
+
       socket.emit("delete_notification", notification.id);
     });
 

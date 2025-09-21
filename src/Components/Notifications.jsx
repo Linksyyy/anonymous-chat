@@ -4,9 +4,11 @@ import { socket } from "../lib/socket";
 
 export default function Notifications({ toggleVisible, notifications }) {
   function handleAcceptInvite(notification) {
-    socket.emit("accept_invite", notification)
+    socket.emit("accept_invite", notification);
   }
-  function handleDenyInvite(notification) {}
+  function handleDenyInvite(notification) {
+    socket.emit("deny_invite", notification);
+  }
 
   return (
     <div onClick={toggleVisible} className="fixed inset-0 z-10">
