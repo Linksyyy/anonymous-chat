@@ -1,6 +1,7 @@
 "use client";
 import { useEffect, useState } from "react";
-import { IoMdAddCircleOutline, IoIosNotifications } from "react-icons/io";
+import { IoMdAddCircleOutline } from "react-icons/io";
+import { MdOutlineMailOutline } from "react-icons/md";
 import { FaInfoCircle } from "react-icons/fa";
 import { TiGroup } from "react-icons/ti";
 import { getNotificationsOfUser, getParticipationsOfUser } from "../lib/api";
@@ -58,9 +59,9 @@ export default function ChatsList() {
               }
               className="cursor-pointer text-white hover:text-gray-400 relative"
             >
-              <IoIosNotifications className="size-8" />
+              <MdOutlineMailOutline className="size-8" />
               {notifications.length > 0 && (
-                <div className="absolute top-1 right-1 bg-primary-0 w-3 h-3 rounded-full flex items-center justify-center">
+                <div className="absolute top-1 right-0 bg-primary-0 w-3 h-3 rounded-full flex items-center justify-center">
                   <div className="w-2 h-2 bg-red-600 rounded-full" />
                 </div>
               )}
