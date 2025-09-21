@@ -10,7 +10,6 @@ import CreateChatForm from "./CreateChatForm";
 import ChatInfo from "./ChatInfo";
 import Notifications from "./Notifications";
 import { socket } from "../lib/socket";
-import { useSocket } from "../lib/useSocket";
 
 socket.on("new_chat", (chat) => console.log(chat));
 
@@ -33,7 +32,7 @@ export default function ChatsList() {
       const res = await getParticipationsOfUser(id);
       setChats(res.result.map((participation) => participation.chat));
       const resNotf = await getNotificationsOfUser(id);
-      console.log(resNotf)
+      console.log(resNotf);
       setNotifications(resNotf.notifications);
     };
     find();
@@ -61,9 +60,14 @@ export default function ChatsList() {
               onClick={() =>
                 setNotificationsVisible(notificationsVisible ? false : true)
               }
-              className="cursor-pointer text-white hover:text-gray-400"
+              className="cursor-pointer text-white hover:text-gray-400 relative"
             >
               <IoIosNotifications className="size-8" />
+              {notifications.length > 0 && (
+                <div className="absolute top-1 right-1 bg-primary-0 w-3 h-3 rounded-full flex items-center justify-center">
+                  <div className="w-2 h-2 bg-red-600 rounded-full" />
+                </div>
+              )}
             </button>
             {notificationsVisible && (
               <Notifications

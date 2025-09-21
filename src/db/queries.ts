@@ -36,6 +36,23 @@ export async function createChat(title: string = "NO NAME") {
   return await db.insert(chats).values({ title }).returning();
 }
 
+export async function findChat(chatId: string) {
+  return await db.query.chats.findFirst({
+    where: eq(chats.id, chatId),
+    with: {
+      participants: {
+        with: {
+          user: {
+            columns: {
+              password_hash: false,
+            },
+          },
+        },
+      },
+    },
+  });
+}
+
 export async function createInvite(
   sender_id: string,
   receiver_id: string,

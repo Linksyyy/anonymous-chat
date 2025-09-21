@@ -9,6 +9,7 @@ import {
   createInvite,
   createParticipant,
   deleteNotification,
+  findChat,
   findUser,
   findUserByUsername,
 } from "./db/queries";
@@ -51,9 +52,9 @@ app.prepare().then(async () => {
       if (title.trim() !== "") {
         const [chatCreated] = await createChat(title);
         await createParticipant(user.id, chatCreated.id, "admin");
-        console.log(`User ${user.username} created ${chatCreated.title}`);
+        const chatData = await findChat(chatCreated.id);
 
-        socket.emit("added_chat", chatCreated);
+        socket.emit("added_chat", chatData);
       }
     });
 
