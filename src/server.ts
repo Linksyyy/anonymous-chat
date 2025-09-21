@@ -1,5 +1,4 @@
 import { createServer } from "http";
-import { parse } from "url";
 import cookie from "cookie";
 import next from "next";
 import { Server } from "socket.io";
@@ -13,7 +12,6 @@ import {
   findUser,
   findUserByUsername,
 } from "./db/queries";
-import { notifications } from "./db/schemas";
 
 const socketsMap = new Map();
 
@@ -23,8 +21,7 @@ const handle = app.getRequestHandler();
 
 app.prepare().then(async () => {
   const server = createServer((req, res) => {
-    const parsedUrl = parse(req.url!, true);
-    handle(req, res, parsedUrl);
+    handle(req, res);
   });
 
   const io = new Server(server);
@@ -115,7 +112,7 @@ app.prepare().then(async () => {
     });
   });
 
-  const port = process.env.PORT || 3000;
+  const port = 3000;
   server.listen(port, () => {
     console.log(`> Ready on http://localhost:${port}`);
   });
