@@ -14,6 +14,8 @@ export default function ChatInfo({ chat, toggleVisible }) {
     console.log(chat);
     if (e.key === "Enter") {
       socket.emit("new_invite", inviteValue, chat.id);
+      setInviteValue("");
+      setInviteSearchVisible(false);
     }
   }
   return (
