@@ -119,3 +119,11 @@ export async function findNotificationsOfuser(user_id: string) {
 export async function deleteNotification(id: string) {
   await db.delete(notifications).where(eq(notifications.id, id));
 }
+
+export async function deleteChat(chatId: string) {
+  await db.delete(chats).where(eq(chats.id, chatId));
+}
+
+export async function deleteParticipation(participationId: string) {
+  await db.delete(participants).where(eq(participants.id, participationId));
+}

@@ -39,8 +39,12 @@ export function ActualUserProvider({ children }) {
   useSocket("created_notification", (notification) => {
     setNotifications([...notifications, notification]);
   });
-  useSocket("delete_notification", (notfId) => {
+  useSocket("notification_deleted", (notfId) => {
     setNotifications(notifications.filter((el) => el.id !== notfId));
+  });
+  useSocket("chat_deleted", (chatId) => {
+    console.log("oi")
+    setChats(chats.filter((chat) => chat.id !== chatId));
   });
 
   const ctx = {

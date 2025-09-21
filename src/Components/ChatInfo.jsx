@@ -1,22 +1,31 @@
 import { useState } from "react";
 import { BsPersonAdd } from "react-icons/bs";
 import { socket } from "../lib/socket";
+import { useActualUserProvider } from "../Contexts/ActualUserProvider";
 
 export default function ChatInfo({ chat, toggleVisible }) {
   const [inviteSearchVisible, setInviteSearchVisible] = useState(false);
   const [inviteValue, setInviteValue] = useState("");
+
+  const { id } = useActualUserProvider();
+  const userParticipation = chat.participants.filter(
+    (participation) => participation.user_id === id
+  )[0];
 
   const date = new Date(Date.parse(chat.created_at));
   function toggleInviteSearch() {
     setInviteSearchVisible(inviteSearchVisible ? false : true);
   }
   function handleinviteParticipant(e) {
-    console.log(chat);
     if (e.key === "Enter") {
       socket.emit("new_invite", inviteValue, chat.id);
       setInviteValue("");
       setInviteSearchVisible(false);
     }
+  }
+  function handleDeleteChat() {
+    socket.emit("delete_chat", chat.id);
+    toggleVisible();
   }
   return (
     <div
@@ -81,13 +90,24 @@ export default function ChatInfo({ chat, toggleVisible }) {
             ))}
           </ul>
         </section>
-        <button
-          type="button"
-          onClick={toggleVisible}
-          className="bg-neutral-900 hover:bg-neutral-950 py-1 px-3 rounded-2xl"
-        >
-          Back
-        </button>
+        <section className="flex w-full flex-row gap-10">
+          {userParticipation.role === "admin" && (
+            <button
+              type="button"
+              onClick={handleDeleteChat}
+              className="bg-red-800 w-full hover:bg-red-950 py-1 px-3 rounded-2xl"
+            >
+              Delete
+            </button>
+          )}
+          <button
+            type="button"
+            onClick={toggleVisible}
+            className="bg-neutral-900 w-full hover:bg-neutral-950 py-1 px-3 rounded-2xl"
+          >
+            Back
+          </button>
+        </section>
       </section>
     </div>
   );

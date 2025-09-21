@@ -7,7 +7,9 @@ import {
   createChat,
   createInvite,
   createParticipant,
+  deleteChat,
   deleteNotification,
+  deleteParticipation,
   findChat,
   findUser,
   findUserByUsername,
@@ -77,13 +79,31 @@ app.prepare().then(async () => {
       const chatData = await findChat(notification.chat.id);
 
       socket.emit("added_chat", chatData);
-      socket.emit("delete_notification", notification.id);
+      socket.emit("notification_deleted", notification.id);
     });
 
     socket.on("deny_invite", async (notification) => {
       await deleteNotification(notification.id);
 
-      socket.emit("delete_notification", notification.id);
+      socket.emit("notification_deleted", notification.id);
+    });
+
+    socket.on("delete_chat", async (chatId) => {
+      const chatData = await findChat(chatId);
+      const userParticipation = chatData.participants.filter(
+        (participation) => participation.user_id === user.id
+      )[0];
+
+      if (userParticipation.role !== "admin") return;
+
+      for (let participation of chatData.participants) {
+        deleteParticipation(participation.id);
+        const targetSocketId = socketsMap.get(participation.user.id);
+        if (targetSocketId) {
+          io.to(targetSocketId).emit("chat_deleted", chatData.id);
+        }
+      }
+      deleteChat(chatData.id);
     });
 
     socket.on("join_chat", (chatId) => {
@@ -104,11 +124,7 @@ app.prepare().then(async () => {
     });
 
     socket.on("disconnect", () => {
-      if (user) {
-        console.log(`A user ${user.username} disconnected`);
-      } else {
-        console.log("An anonymous user disconnected");
-      }
+      console.log(`A user ${user.username} disconnected`);
     });
   });
 
