@@ -40,7 +40,6 @@ export async function POST(req: NextRequest) {
 
   response.cookies.set("auth-token", JWTtoken, {
     httpOnly: true,
-    sameSite: true,
     secure: true,
   });
 

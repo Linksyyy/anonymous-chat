@@ -9,9 +9,6 @@ import { useActualOpenedChatProvider } from "../Contexts/ActualOpenedChatProvide
 import CreateChatForm from "./CreateChatForm";
 import ChatInfo from "./ChatInfo";
 import Notifications from "./Notifications";
-import { socket } from "../lib/socket";
-
-socket.on("new_chat", (chat) => console.log(chat));
 
 export default function ChatsList() {
   const [createVisible, setCreateVisible] = useState(false);
@@ -32,7 +29,6 @@ export default function ChatsList() {
       const res = await getParticipationsOfUser(id);
       setChats(res.result.map((participation) => participation.chat));
       const resNotf = await getNotificationsOfUser(id);
-      console.log(resNotf);
       setNotifications(resNotf.notifications);
     };
     find();
