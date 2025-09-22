@@ -128,8 +128,10 @@ app.prepare().then(async () => {
     });
   });
 
-  const port = 3000;
-  server.listen(port, () => {
-    console.log(`> Ready on http://localhost:${port}`);
+  const port = process.env.PORT || 3000;
+  const host = "0.0.0.0"; // Escuta em todas as interfaces de rede disponíveis
+
+  server.listen({ port, host }, () => {
+    console.log(`> Server listening on port ${port}`);
   });
 });
