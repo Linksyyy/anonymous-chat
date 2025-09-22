@@ -1,5 +1,5 @@
 "use client";
-import { useEffect, useState } from "react";
+import { Suspense, useEffect, useState } from "react";
 import { MdCancel, MdLogin } from "react-icons/md";
 import { login } from "../../lib/api";
 import { useRouter, useSearchParams } from "next/navigation";
@@ -8,7 +8,7 @@ import { deriveKeyFromPassword } from "../../lib/cryptography";
 import { useKeyProvider } from "../../Contexts/KeyProvider";
 import { useActualUserProvider } from "../../Contexts/ActualUserProvider";
 
-export default function Login() {
+function LoginComponent() {
   const [username, setUsername] = useState("");
   const [password, setPassword] = useState("");
   const [errorState, setErrorState] = useState({
@@ -45,10 +45,7 @@ export default function Login() {
 
     //cant use the state "error" like conditional bc res is async
     if (!hasError) {
-      const derivedKey = await deriveKeyFromPassword(
-        password,
-        user.ee_salt
-      );
+      const derivedKey = await deriveKeyFromPassword(password, user.ee_salt);
       actualUserManager.setUsername(user.username);
       actualUserManager.setId(user.id);
       keyManager.setKey(derivedKey);
@@ -109,5 +106,19 @@ export default function Login() {
         </div>
       </form>
     </div>
+  );
+}
+
+export default function LoginPage() {
+  return (
+    <Suspense
+      fallback={
+        <div className="fixed inset-0 flex items-center justify-center">
+          Loading...
+        </div>
+      }
+    >
+      <LoginComponent />
+    </Suspense>
   );
 }
