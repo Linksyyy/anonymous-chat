@@ -43,8 +43,14 @@ export default function Notifications({ toggleVisible, notifications }) {
                       <>
                         <p className="font-semibold">Chat invite</p>
                         <p className="text-sm text-gray-400">
-                          The user {notification.sender.username} invited you to
-                          chat {notification.chat.title}
+                          The user{" "}
+                          <span className="font-bold text-neutral-300">
+                            {notification.sender.username}
+                          </span>{" "}
+                          invited you to chat{" "}
+                          <span className="font-bold text-neutral-300">
+                            {notification.chat.title}
+                          </span>
                         </p>
                       </>
                     )}
