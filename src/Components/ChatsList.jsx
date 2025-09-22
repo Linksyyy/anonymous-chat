@@ -17,7 +17,7 @@ export default function ChatsList() {
   const [notificationsVisible, setNotificationsVisible] = useState(false);
   const [chatToSeeInfo, setChatToSeeInfo] = useState(null);
 
-  const { chats, id, setChats, notifications, setNotifications } =
+  const { id, username, chats, setChats, notifications, setNotifications } =
     useActualUserProvider();
   const actualOpenedChatManager = useActualOpenedChatProvider();
 
@@ -41,7 +41,7 @@ export default function ChatsList() {
   }
 
   return (
-    <aside className="overflow-y-auto bg-primary-0 border-r-1 border-primary-1 gap-2 flex h-full w-64 flex-col">
+    <aside className="relative overflow-y-auto bg-primary-0 border-r-1 border-primary-1 gap-2 flex h-full w-64 flex-col">
       <header className="bg-primary-1 p-4 flex flex-col gap-2">
         <div className="flex items-center justify-center gap-2">
           {createVisible && (
@@ -120,6 +120,9 @@ export default function ChatsList() {
           </button>
         </div>
       ))}
+      <footer className="absolute bottom-0 bg-primary-1 w-full flex items-center justify-center h-1/18">
+        Logged in with {username}
+      </footer>
     </aside>
   );
 }
