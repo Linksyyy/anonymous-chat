@@ -1,4 +1,4 @@
-// All this file was designed to run only on browser to e2ee 
+// All this file was designed to run only on browser to e2ee
 // it only runs on browser because is used window.crypto
 
 export async function deriveKeyFromPassword(password: string, saltHex: string) {
@@ -21,7 +21,7 @@ export async function deriveKeyFromPassword(password: string, saltHex: string) {
   );
 }
 
-export async function encryptData(data: any, derivedKey: CryptoKey) {
+export async function symmetricEncrypt(data: any, derivedKey: CryptoKey) {
   const iv = window.crypto.getRandomValues(new Uint8Array(12));
   const dataAsbytes = new TextEncoder().encode(JSON.stringify(data));
   const encryptedData = await window.crypto.subtle.encrypt(
@@ -32,7 +32,7 @@ export async function encryptData(data: any, derivedKey: CryptoKey) {
   return { iv, encryptedData };
 }
 
-export async function decryptData(
+export async function symmetricDecrypt(
   encryptDataResult: {
     iv: Uint8Array<ArrayBuffer>;
     encryptedData: ArrayBuffer;
@@ -47,4 +47,45 @@ export async function decryptData(
 
   const message = new TextDecoder().decode(decryptedMessage);
   return JSON.parse(message);
+}
+
+export async function generateUserKeyPair() {
+  const keys = window.crypto.subtle.generateKey(
+    {
+      name: "RSA-OAEP",
+      modulusLength: 2048,
+      publicExponent: new Uint8Array([1, 0, 1]),
+      hash: "SHA-256",
+    },
+    true,
+    ["encrypt", "decrypt"]
+  );
+  return keys;
+}
+
+export async function asymmetricEncrypt(
+  privateKey: CryptoKey,
+  dataString: string
+) {
+  const iv = window.crypto.getRandomValues(new Uint8Array(12));
+  const data = new TextEncoder().encode(dataString);
+
+  return await window.crypto.subtle.encrypt(
+    { name: "RSA-OAEP" },
+    privateKey,
+    data
+  );
+}
+
+export async function asymmetricDecrypt(
+  publlicKey: CryptoKey,
+  encryptedData: ArrayBuffer
+) {
+  const iv = window.crypto.getRandomValues(new Uint8Array(12));
+
+  return await window.crypto.subtle.decrypt(
+    { name: "RSA-OAEP" },
+    publlicKey,
+    encryptedData
+  );
 }

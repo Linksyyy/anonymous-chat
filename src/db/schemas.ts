@@ -19,6 +19,8 @@ export const users = pgTable("users", {
   username: varchar({ length: 255 }).unique().notNull(),
   password_hash: varchar({ length: 255 }).notNull(),
   ee_salt: char({ length: 32 }).unique().notNull(),
+  public_key: text("public_key").notNull(),
+  encrypted_private_key: text("encrypted_private_key").notNull(),
 });
 
 export const chats = pgTable("chats", {
