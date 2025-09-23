@@ -4,7 +4,7 @@ import { MdCancel, MdLogin } from "react-icons/md";
 import { login } from "../../lib/api";
 import { useRouter, useSearchParams } from "next/navigation";
 import Link from "next/link";
-import { deriveKeyFromPassword } from "../../lib/cryptography";
+import { client as cryptoClient } from "../../lib/cryptography";
 import { useKeyProvider } from "../../Contexts/KeyProvider";
 import { useActualUserProvider } from "../../Contexts/ActualUserProvider";
 
@@ -45,7 +45,7 @@ function LoginComponent() {
 
     //cant use the state "error" like conditional bc res is async
     if (!hasError) {
-      const derivedKey = await deriveKeyFromPassword(password, user.ee_salt);
+      const derivedKey = await cryptoClient.deriveKeyFromPassword(password, user.ee_salt);
       actualUserManager.setUsername(user.username);
       actualUserManager.setId(user.id);
       keyManager.setKey(derivedKey);

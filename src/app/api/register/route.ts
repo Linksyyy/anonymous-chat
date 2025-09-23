@@ -2,12 +2,7 @@ import { NextRequest, NextResponse } from "next/server";
 import { findUserByUsername, registerUser } from "../../../db/queries";
 import bcrypt from "bcryptjs";
 import { randomBytes } from "node:crypto";
-import {
-  deriveKeyFromPasswordServer,
-  exportKeyToJwt,
-  generateUserKeyPair,
-  symmetricEncryptServer,
-} from "../../../lib/cryptography";
+import { server as cryptoServer } from "../../../lib/cryptography";
 
 const saltRounds = 10;
 
@@ -40,11 +35,17 @@ export async function POST(req: NextRequest) {
   try {
     const hashedPassword = await bcrypt.hash(password, saltRounds);
     const ee_salt = randomBytes(16).toString("hex");
-    const keyPair = await generateUserKeyPair();
-    const pubKey = await exportKeyToJwt(keyPair.publicKey);
-    const privKey = await exportKeyToJwt(keyPair.privateKey);
-    const derivedKey = await deriveKeyFromPasswordServer(password, ee_salt);
-    const encryptedPrivKey = await symmetricEncryptServer(privKey, derivedKey);
+    const keyPair = await cryptoServer.generateUserKeyPair();
+    const pubKey = await cryptoServer.exportKeyToJwt(keyPair.publicKey);
+    const privKey = await cryptoServer.exportKeyToJwt(keyPair.privateKey);
+    const derivedKey = await cryptoServer.deriveKeyFromPassword(
+      password,
+      ee_salt
+    );
+    const encryptedPrivKey = await cryptoServer.symmetricEncrypt(
+      privKey,
+      derivedKey
+    );
 
     console.log(username, hashedPassword);
     await registerUser(
