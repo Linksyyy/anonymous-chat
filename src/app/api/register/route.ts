@@ -9,9 +9,9 @@ const saltRounds = 10;
 export async function POST(req: NextRequest) {
   const data = await req.json();
   const username = data.username.trim().toLowerCase();
-  const password = data.password.trim();
+  const preHashedpassword = data.preHashedpassword.trim();
 
-  if (username === "" || password === "")
+  if (username === "" || preHashedpassword === "")
     return NextResponse.json(
       { message: "Username and password must be defined" },
       { status: 422 }
@@ -25,7 +25,7 @@ export async function POST(req: NextRequest) {
       { status: 401 }
     );
 
-  if (password.length < 8) {
+  if (preHashedpassword.length < 8) {
     return NextResponse.json(
       { message: "Minimun password length is 8" },
       { status: 401 }
@@ -33,13 +33,13 @@ export async function POST(req: NextRequest) {
   }
 
   try {
-    const hashedPassword = await bcrypt.hash(password, saltRounds);
+    const hashedPassword = await bcrypt.hash(preHashedpassword, saltRounds);
     const ee_salt = randomBytes(16).toString("hex");
     const keyPair = await cryptoServer.generateUserKeyPair();
     const pubKey = await cryptoServer.exportKeyToJwt(keyPair.publicKey);
     const privKey = await cryptoServer.exportKeyToJwt(keyPair.privateKey);
     const derivedKey = await cryptoServer.deriveKeyFromPassword(
-      password,
+      preHashedpassword,
       ee_salt
     );
     const encryptedPrivKey = await cryptoServer.symmetricEncrypt(

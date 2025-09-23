@@ -6,9 +6,9 @@ import { SignJWT } from "jose";
 export async function POST(req: NextRequest) {
   const data = await req.json();
   const username = data.username.trim().toLowerCase();
-  const password = data.password.trim();
+  const preHashedpassword = data.preHashedpassword.trim();
 
-  if (username === "" || password === "")
+  if (username === "" || preHashedpassword === "")
     return NextResponse.json(
       { message: "Username and password must be defined" },
       { status: 422 }
@@ -22,7 +22,7 @@ export async function POST(req: NextRequest) {
       { status: 401 }
     );
 
-  if (!(await bcrypt.compare(password, user.password_hash)))
+  if (!(await bcrypt.compare(preHashedpassword, user.password_hash)))
     return NextResponse.json({ message: "Invalid password" }, { status: 401 });
 
   const response = NextResponse.json(

@@ -1,6 +1,15 @@
 import crypt from "node:crypto";
 
 export const client = {
+  async hash(dataString: string) {
+    const data = new TextEncoder().encode(dataString);
+    const digest = await window.crypto.subtle.digest({ name: "SHA-512" }, data);
+    //tranform the ArrayBuffer into hexadecimal
+    return Array.from(new Uint8Array(digest))
+      .map((b) => b.toString(16).padStart(2, "0"))
+      .join("");
+  },
+
   async deriveKeyFromPassword(password: string, saltHex: string) {
     const salt = Uint8Array.from(
       saltHex.match(/.{1,2}/g).map((byte) => parseInt(byte, 16))

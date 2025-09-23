@@ -4,6 +4,7 @@ import { useState } from "react";
 import { MdCancel, MdCreate } from "react-icons/md";
 import { register } from "../../lib/api";
 import { useRouter } from "next/navigation";
+import { client as cryptoClient } from "../../lib/cryptography";
 
 export default function Register() {
   const [username, setUsername] = useState("");
@@ -29,8 +30,8 @@ export default function Register() {
       });
       return;
     }
-
-    const { hasError, message } = await register(username, password);
+    const preHashedPassword = await cryptoClient.hash(password);
+    const { hasError, message } = await register(username, preHashedPassword);
     setErrorState({ hasError, message });
 
     //cant use state error like conditional bc res is async

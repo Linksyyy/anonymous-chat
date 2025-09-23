@@ -1,7 +1,7 @@
-export async function login(username: string, password: string) {
+export async function login(username: string, preHashedpassword: string) {
   const res = await fetch("/api/login", {
     method: "POST",
-    body: JSON.stringify({ username, password }),
+    body: JSON.stringify({ username, preHashedpassword }),
   });
 
   let data;
@@ -16,10 +16,10 @@ export async function login(username: string, password: string) {
   return { ...data, hasError: false };
 }
 
-export async function register(username: string, password: string) {
+export async function register(username: string, preHashedpassword: string) {
   const res = await fetch("/api/register", {
     method: "POST",
-    body: JSON.stringify({ username, password }),
+    body: JSON.stringify({ username, preHashedpassword }),
   });
 
   let data;
