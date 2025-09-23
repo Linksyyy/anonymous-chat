@@ -1,5 +1,4 @@
-// All this file was designed to run only on browser to e2ee
-// it only runs on browser because is used window.crypto
+import crypt from "node:crypto";
 
 export async function deriveKeyFromPassword(password: string, saltHex: string) {
   const salt = Uint8Array.from(
@@ -50,7 +49,7 @@ export async function symmetricDecrypt(
 }
 
 export async function generateUserKeyPair() {
-  const keys = window.crypto.subtle.generateKey(
+  const keys = crypto.subtle.generateKey(
     {
       name: "RSA-OAEP",
       modulusLength: 2048,
@@ -67,10 +66,10 @@ export async function asymmetricEncrypt(
   privateKey: CryptoKey,
   dataString: string
 ) {
-  const iv = window.crypto.getRandomValues(new Uint8Array(12));
+  const iv = crypto.getRandomValues(new Uint8Array(12));
   const data = new TextEncoder().encode(dataString);
 
-  return await window.crypto.subtle.encrypt(
+  return await crypto.subtle.encrypt(
     { name: "RSA-OAEP" },
     privateKey,
     data
@@ -81,11 +80,62 @@ export async function asymmetricDecrypt(
   publlicKey: CryptoKey,
   encryptedData: ArrayBuffer
 ) {
-  const iv = window.crypto.getRandomValues(new Uint8Array(12));
-
-  return await window.crypto.subtle.decrypt(
+  return await crypto.subtle.decrypt(
     { name: "RSA-OAEP" },
     publlicKey,
     encryptedData
   );
+}
+
+export async function exportKeyToJwt(key: CryptoKey) {
+  return await crypto.subtle.exportKey("jwk", key);
+}
+
+export async function importKeyFromJwt(
+  jwt: JsonWebKey,
+  algorithmName: string,
+  keyUsages: string[]
+) {
+  return await crypto.subtle.importKey(
+    // @ts-ignore
+    "jwk",
+    jwt,
+    {
+      name: algorithmName,
+      hash: "SHA-256",
+    },
+    true,
+    keyUsages
+  );
+}
+
+export async function deriveKeyFromPasswordServer(password: string, saltHex: string) {
+  const salt = Uint8Array.from(
+    saltHex.match(/.{1,2}/g).map((byte) => parseInt(byte, 16))
+  );
+  const baseKey = await crypto.subtle.importKey(
+    "raw",
+    new TextEncoder().encode(password),
+    { name: "PBKDF2" },
+    false,
+    ["deriveKey"]
+  );
+  return await crypto.subtle.deriveKey(
+    { name: "PBKDF2", salt: salt, iterations: 310000, hash: "SHA-512" },
+    baseKey,
+    { name: "AES-GCM", length: 256 },
+    true,
+    ["encrypt", "decrypt"]
+  );
+}
+
+export async function symmetricEncryptServer(data: any, derivedKey: CryptoKey) {
+  const iv = crypto.getRandomValues(new Uint8Array(12));
+  const dataAsbytes = new TextEncoder().encode(JSON.stringify(data));
+  const encryptedData = await crypto.subtle.encrypt(
+    { name: "AES-GCM", iv },
+    derivedKey,
+    dataAsbytes
+  );
+  return { iv, encryptedData };
 }
