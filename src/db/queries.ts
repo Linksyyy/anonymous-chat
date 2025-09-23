@@ -1,6 +1,7 @@
 import { eq } from "drizzle-orm";
 import { db } from "./db";
 import { chats, notifications, participants, users } from "./schemas";
+import { v7 } from "uuid";
 import { randomBytes } from "crypto";
 
 export async function findUser(id: string) {
@@ -16,9 +17,22 @@ export async function findUserByUsername(username: string) {
   return result[0];
 }
 
-export async function registerUser(username: string, password_hash: string) {
-  const ee_salt = randomBytes(16).toString("hex");
-  await db.insert(users).values({ username, password_hash, ee_salt });
+export async function registerUser(
+  username: string,
+  password_hash: string,
+  ee_salt: string,
+  pubKey: JsonWebKey,
+  encryptedPrivKey: {
+    iv: Uint8Array<ArrayBuffer>;
+    encryptedData: ArrayBuffer;
+  }
+) {
+  const id = v7();
+  const public_key = JSON.stringify(pubKey);
+  const encrypted_private_key = JSON.stringify(encryptedPrivKey)
+  await db
+    .insert(users)
+    .values({ id, username, password_hash, ee_salt, public_key, encrypted_private_key });
 }
 
 export async function createParticipant(
