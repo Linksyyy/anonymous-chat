@@ -43,8 +43,22 @@ export function ActualUserProvider({ children }) {
     setNotifications(notifications.filter((el) => el.id !== notfId));
   });
   useSocket("chat_deleted", (chatId) => {
-    console.log("oi")
+    console.log("oi");
     setChats(chats.filter((chat) => chat.id !== chatId));
+  });
+  useSocket("participant_added", (participationData) => {
+    const chatIndex = chats.findIndex(
+      (chat) => chat.id === participationData.chat_id
+    );
+    if (chatIndex === -1) return;
+
+    let newChats = chats;
+    newChats[chatIndex].participants = [
+      ...chats[chatIndex].participants,
+      participationData,
+    ];
+
+    setChats(newChats);
   });
 
   const ctx = {

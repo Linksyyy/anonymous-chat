@@ -11,6 +11,7 @@ import {
   deleteNotification,
   deleteParticipation,
   findChat,
+  findParticipationData,
   findUser,
   findUserByUsername,
 } from "./db/queries";
@@ -75,11 +76,21 @@ app.prepare().then(async () => {
 
     socket.on("accept_invite", async (notification) => {
       await deleteNotification(notification.id);
-      await createParticipant(user.id, notification.chat_id, "guest");
+      const newParticipation = await createParticipant(
+        user.id,
+        notification.chat_id,
+        "guest"
+      );
+      const participationData = await findParticipationData(newParticipation.id);
       const chatData = await findChat(notification.chat.id);
 
       socket.emit("added_chat", chatData);
       socket.emit("notification_deleted", notification.id);
+      for (let participant of chatData.participants) {
+        socket
+          .to(socketsMap.get(participant.user_id))
+          .emit("participant_added", participationData);
+      }
     });
 
     socket.on("deny_invite", async (notification) => {

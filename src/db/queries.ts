@@ -1,4 +1,4 @@
-import { eq } from "drizzle-orm";
+import { and, eq } from "drizzle-orm";
 import { db } from "./db";
 import { chats, notifications, participants, users } from "./schemas";
 import { v7 } from "uuid";
@@ -29,10 +29,15 @@ export async function registerUser(
 ) {
   const id = v7();
   const public_key = JSON.stringify(pubKey);
-  const encrypted_private_key = JSON.stringify(encryptedPrivKey)
-  await db
-    .insert(users)
-    .values({ id, username, password_hash, ee_salt, public_key, encrypted_private_key });
+  const encrypted_private_key = JSON.stringify(encryptedPrivKey);
+  await db.insert(users).values({
+    id,
+    username,
+    password_hash,
+    ee_salt,
+    public_key,
+    encrypted_private_key,
+  });
 }
 
 export async function createParticipant(
@@ -40,10 +45,11 @@ export async function createParticipant(
   chat_id: string,
   role: "guest" | "admin" = "guest"
 ) {
-  return await db
+  const newParticipation = await db
     .insert(participants)
     .values({ user_id, chat_id, role })
     .returning();
+  return newParticipation[0];
 }
 
 export async function createChat(title: string = "NO NAME") {
@@ -114,6 +120,20 @@ export async function findParticipationsOfUser(userId: string) {
     },
   });
   return participations;
+}
+
+export async function findParticipationData(participantioId: string) {
+  const participation = await db.query.participants.findFirst({
+    where: eq(participants.id, participantioId),
+    with: {
+      user: {
+        columns: {
+          password_hash: false,
+        },
+      },
+    },
+  });
+  return participation;
 }
 
 export async function findNotificationsOfuser(user_id: string) {
