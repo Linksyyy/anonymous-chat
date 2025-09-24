@@ -38,9 +38,11 @@ export function ActualUserProvider({ children }) {
   };
 
   const loadAndSetUserKeys = async (
-    { encryptedKeyHex, ivHex },
+    publicKey,
+    privateKey,
     passwordDerivedKey
   ) => {
+    const { encryptedKeyHex, ivHex } = privateKey;
     const decryptedJwk = await cryptoClient.symmetricDecrypt(
       { encryptedData: encryptedKeyHex, iv: ivHex },
       passwordDerivedKey
@@ -53,6 +55,13 @@ export function ActualUserProvider({ children }) {
         ["decrypt"]
       );
       setPrivateKey(privateKeyObject);
+
+      const publicKeyObject = await cryptoClient.importKeyFromJwt(
+        publicKey,
+        "RSA-OAEP",
+        ["encrypt"]
+      );
+      setPublicKey(publicKeyObject);
     } else {
       console.error(
         "Failed to decrypt the private key. The password might be wrong."
@@ -97,7 +106,6 @@ export function ActualUserProvider({ children }) {
     notifications,
     setNotifications,
     publicKey,
-    setPublicKey,
     privateKey,
     loadAndSetUserKeys,
   };

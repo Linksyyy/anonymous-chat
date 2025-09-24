@@ -54,11 +54,11 @@ function LoginComponent() {
       );
       actualUserManager.setId(user.id);
       keyManager.setKey(derivedKey);
-      actualUserManager.setPublicKey(JSON.parse(user.public_key));
 
       // Decrypt and load the user's private key
       const encryptedKeyPayload = JSON.parse(user.encrypted_private_key);
       await actualUserManager.loadAndSetUserKeys(
+        JSON.parse(user.public_key),
         {
           encryptedKeyHex: encryptedKeyPayload.hexEncryptedData,
           ivHex: encryptedKeyPayload.iv,
