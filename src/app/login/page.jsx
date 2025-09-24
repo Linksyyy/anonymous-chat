@@ -28,6 +28,12 @@ function LoginComponent() {
         case "token_expired":
           setErrorState({ hasError: true, message: "Session expired" });
           break;
+        case "reloaded":
+          setErrorState({
+            hasError: true,
+            message: "For security, session is finished every reload",
+          });
+          break;
         default:
           break;
       }

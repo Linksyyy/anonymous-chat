@@ -1,5 +1,6 @@
 "use client";
 import { createContext, useContext, useState, useEffect } from "react";
+import { useRouter } from "next/navigation";
 import { useSocket } from "../lib/useSocket";
 import { useKeyProvider } from "./KeyProvider";
 import { client as cryptoClient } from "../lib/cryptography";
@@ -14,15 +15,19 @@ export function ActualUserProvider({ children }) {
 
   const keyManager = useKeyProvider();
   const privateKey = keyManager.privateKey;
+  const router = useRouter();
 
   useEffect(() => {
-    const storedUser = localStorage.getItem("actualUser");
-    if (storedUser) {
-      const { id, username } = JSON.parse(storedUser);
-      setId(id);
-      setUsername(username);
-    }
-  }, []);
+    setId(null);
+    setUsername(null);
+
+    const performLogoutAndRedirect = async () => {
+      await fetch("/api/logout", { method: "POST" });
+      router.push("/login?error=reloaded");
+    };
+
+    performLogoutAndRedirect();
+  }, [router]);
 
   const updateId = (newId) => {
     const currentUser = JSON.parse(localStorage.getItem("actualUser")) || {};
@@ -41,17 +46,19 @@ export function ActualUserProvider({ children }) {
   useSocket("added_chat", async (chat, base64EncryptedGroupKey) => {
     if (!privateKey) return;
     setChats([...chats, chat]);
-    const encryptedGroupKey =
-      cryptoClient.base64ToArrayBuffer(base64EncryptedGroupKey);
+    const encryptedGroupKey = cryptoClient.base64ToArrayBuffer(
+      base64EncryptedGroupKey
+    );
     const decryptedGroupKey = await cryptoClient.asymmetricDecrypt(
       privateKey,
       encryptedGroupKey
     );
     const jwtGroupKey = JSON.parse(new TextDecoder().decode(decryptedGroupKey));
-    const groupKey = await cryptoClient.importKeyFromJwt(jwtGroupKey, "AES-GCM", [
-      "encrypt",
-      "decrypt",
-    ]);
+    const groupKey = await cryptoClient.importKeyFromJwt(
+      jwtGroupKey,
+      "AES-GCM",
+      ["encrypt", "decrypt"]
+    );
     keyManager.addGroupKey(chat.id, groupKey);
   });
   useSocket("created_notification", (notification) => {

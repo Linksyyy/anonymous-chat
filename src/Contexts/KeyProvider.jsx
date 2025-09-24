@@ -10,13 +10,13 @@ export function KeyProvider({ children }) {
   const [groupKeys, setGroupKeys] = useState(new Map());
   const [privateKey, setPrivateKey] = useState(null);
 
-  async function addGroupKey(chatId, key) {
+  function addGroupKey(chatId, key) {
     const newGroupKeys = new Map(groupKeys);
     newGroupKeys.set(chatId, key);
     setGroupKeys(newGroupKeys);
   }
 
-  async function getGroupKey(chatdId) {
+  function getGroupKey(chatdId) {
     return groupKeys.get(chatdId);
   }
 
