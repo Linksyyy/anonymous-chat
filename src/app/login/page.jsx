@@ -40,18 +40,31 @@ function LoginComponent() {
     setUsername(username.trim());
     setPassword(password.trim());
     const preHashedPassword = await cryptoClient.hash(password);
-    const { hasError, message, user } = await login(username, preHashedPassword);
+    const { hasError, message, user } = await login(
+      username,
+      preHashedPassword
+    );
     setErrorState({ hasError, message });
 
     //cant use the state "error" like conditional bc res is async
     if (!hasError) {
       const derivedKey = await cryptoClient.deriveKeyFromPassword(
-        password,
+        preHashedPassword,
         user.ee_salt
       );
-      actualUserManager.setUsername(user.username);
       actualUserManager.setId(user.id);
       keyManager.setKey(derivedKey);
+      actualUserManager.setPublicKey(JSON.parse(user.public_key));
+
+      // Decrypt and load the user's private key
+      const encryptedKeyPayload = JSON.parse(user.encrypted_private_key);
+      await actualUserManager.loadAndSetUserKeys(
+        {
+          encryptedKeyHex: encryptedKeyPayload.hexEncryptedData,
+          ivHex: encryptedKeyPayload.iv,
+        },
+        derivedKey
+      );
       router.push("/lounge");
     }
   }

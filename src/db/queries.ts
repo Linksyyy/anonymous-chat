@@ -23,8 +23,8 @@ export async function registerUser(
   ee_salt: string,
   pubKey: JsonWebKey,
   encryptedPrivKey: {
-    iv: Uint8Array<ArrayBuffer>;
-    encryptedData: ArrayBuffer;
+    iv: string;
+    hexEncryptedData: string;
   }
 ) {
   const id = v7();
@@ -65,6 +65,7 @@ export async function findChat(chatId: string) {
           user: {
             columns: {
               password_hash: false,
+              encrypted_private_key: false,
             },
           },
         },
@@ -91,6 +92,7 @@ export async function createInvite(
       sender: {
         columns: {
           password_hash: false,
+          encrypted_private_key: false,
         },
       },
     },
@@ -108,6 +110,7 @@ export async function findParticipationsOfUser(userId: string) {
               user: {
                 columns: {
                   password_hash: false,
+                  encrypted_private_key: false,
                 },
                 with: {
                   notificationsReceived: true,
@@ -129,6 +132,7 @@ export async function findParticipationData(participantioId: string) {
       user: {
         columns: {
           password_hash: false,
+          encrypted_private_key: false,
         },
       },
     },
@@ -144,6 +148,7 @@ export async function findNotificationsOfuser(user_id: string) {
       sender: {
         columns: {
           password_hash: false,
+          encrypted_private_key: false,
         },
       },
     },

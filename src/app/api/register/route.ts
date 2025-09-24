@@ -46,15 +46,15 @@ export async function POST(req: NextRequest) {
       privKey,
       derivedKey
     );
-
-    console.log(username, hashedPassword);
-    await registerUser(
-      username,
-      hashedPassword,
-      ee_salt,
-      pubKey,
-      encryptedPrivKey
+    const hexEncryptedData = cryptoServer.bufferToHex(
+      encryptedPrivKey.encryptedData
     );
+    const ivHex = cryptoServer.bufferToHex(encryptedPrivKey.iv);
+
+    await registerUser(username, hashedPassword, ee_salt, pubKey, {
+      iv: ivHex,
+      hexEncryptedData: hexEncryptedData,
+    });
     return NextResponse.json({ message: "Login successful" }, { status: 200 });
   } catch (e) {
     console.error(e);

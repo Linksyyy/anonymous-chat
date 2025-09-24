@@ -61,6 +61,7 @@ export const notifications = pgTable("notifications", {
   chat_id: uuid().references(() => chats.id),
   type: notificationsTypesEnum().notNull(),
   created_at: timestamp().defaultNow().notNull(),
+  encrypted_group_key: text("encrypted_group_key"),
 });
 // User -> Participant & notifications
 export const usersRelations = relations(users, ({ many }) => ({

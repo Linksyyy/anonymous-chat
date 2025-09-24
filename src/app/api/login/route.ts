@@ -28,14 +28,20 @@ export async function POST(req: NextRequest) {
   const response = NextResponse.json(
     {
       message: "Login successful",
-      user: { id: user.id, username: user.username, ee_salt: user.ee_salt },
+      user: {
+        id: user.id,
+        username: user.username,
+        ee_salt: user.ee_salt,
+        public_key: user.public_key,
+        encrypted_private_key: user.encrypted_private_key,
+      },
     },
     { status: 200 }
   );
   const secret = new TextEncoder().encode(process.env.JWT_SECRET);
   const JWTtoken = await new SignJWT({ userId: user.id })
     .setProtectedHeader({ alg: "HS256" })
-    .setExpirationTime("2d")
+    .setExpirationTime("30s")
     .sign(secret);
 
   response.cookies.set("auth-token", JWTtoken, {

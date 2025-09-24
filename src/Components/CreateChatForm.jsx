@@ -1,8 +1,8 @@
 "use client";
 import { useState } from "react";
-import { postChat } from "../lib/api";
 import { useActualUserProvider } from "../Contexts/ActualUserProvider";
 import { socket } from "../lib/socket";
+import { client as cryptoClient } from "../lib/cryptography";
 
 export default function CreateChatForm({ toggleVisible }) {
   const [title, setTitle] = useState("");
@@ -11,6 +11,8 @@ export default function CreateChatForm({ toggleVisible }) {
   const actualUserManager = useActualUserProvider();
   async function handleSubmit(e) {
     e.preventDefault();
+    const groupKey = await cryptoClient.generateSymmetricKey();
+    const encryptedGroupKey = cryptoClient
     socket.emit("new_chat", title);
     toggleVisible();
   }
