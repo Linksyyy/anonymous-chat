@@ -27,9 +27,6 @@ export async function middleware(req: NextRequest) {
   const isAuth = !!payload;
 
   if (isAuth) {
-    if (pathname === "/login" || pathname === "/register") {
-      return NextResponse.redirect(new URL("/lounge", req.url));
-    }
     return NextResponse.next();
   }
 
