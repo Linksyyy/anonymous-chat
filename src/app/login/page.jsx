@@ -53,11 +53,12 @@ function LoginComponent() {
         user.ee_salt
       );
       actualUserManager.setId(user.id);
+      actualUserManager.setUsername(user.username);
       keyManager.setKey(derivedKey);
 
-      // Decrypt and load the user's private key
+      // Decrypt and load the user's key
       const encryptedKeyPayload = JSON.parse(user.encrypted_private_key);
-      await actualUserManager.loadAndSetUserKeys(
+      await keyManager.loadAndSetUserKeys(
         JSON.parse(user.public_key),
         {
           encryptedKeyHex: encryptedKeyPayload.hexEncryptedData,

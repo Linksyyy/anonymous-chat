@@ -1,8 +1,6 @@
 "use client";
 import { createContext, useContext, useState, useEffect } from "react";
 import { useSocket } from "../lib/useSocket";
-import { client as cryptoClient } from "../lib/cryptography";
-import { useKeyProvider } from "./KeyProvider";
 
 const ActualUserContext = createContext();
 
@@ -11,8 +9,6 @@ export function ActualUserProvider({ children }) {
   const [username, setUsername] = useState(null);
   const [chats, setChats] = useState([]);
   const [notifications, setNotifications] = useState([]);
-  const [publicKey, setPublicKey] = useState(null);
-  const [privateKey, setPrivateKey] = useState(null);
 
   useEffect(() => {
     const storedUser = localStorage.getItem("actualUser");
@@ -35,38 +31,6 @@ export function ActualUserProvider({ children }) {
     const updatedUser = { ...currentUser, username: newUsername };
     localStorage.setItem("actualUser", JSON.stringify(updatedUser));
     setUsername(newUsername);
-  };
-
-  const loadAndSetUserKeys = async (
-    publicKey,
-    privateKey,
-    passwordDerivedKey
-  ) => {
-    const { encryptedKeyHex, ivHex } = privateKey;
-    const decryptedJwk = await cryptoClient.symmetricDecrypt(
-      { encryptedData: encryptedKeyHex, iv: ivHex },
-      passwordDerivedKey
-    );
-
-    if (decryptedJwk) {
-      const privateKeyObject = await cryptoClient.importKeyFromJwt(
-        decryptedJwk,
-        "RSA-OAEP",
-        ["decrypt"]
-      );
-      setPrivateKey(privateKeyObject);
-
-      const publicKeyObject = await cryptoClient.importKeyFromJwt(
-        publicKey,
-        "RSA-OAEP",
-        ["encrypt"]
-      );
-      setPublicKey(publicKeyObject);
-    } else {
-      console.error(
-        "Failed to decrypt the private key. The password might be wrong."
-      );
-    }
   };
 
   useSocket("added_chat", (chat) => {
@@ -105,9 +69,6 @@ export function ActualUserProvider({ children }) {
     setChats,
     notifications,
     setNotifications,
-    publicKey,
-    privateKey,
-    loadAndSetUserKeys,
   };
 
   return (
