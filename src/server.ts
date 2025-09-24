@@ -49,13 +49,13 @@ app.prepare().then(async () => {
 
     console.log(`The user ${user.username} connected`);
 
-    socket.on("new_chat", async (title) => {
+    socket.on("new_chat", async (title, encryptedGroupKey) => {
       if (title.trim() !== "") {
         const [chatCreated] = await createChat(title);
         await createParticipant(user.id, chatCreated.id, "admin");
         const chatData = await findChat(chatCreated.id);
 
-        socket.emit("added_chat", chatData);
+        socket.emit("added_chat", chatData, encryptedGroupKey);
       }
     });
 
@@ -81,7 +81,9 @@ app.prepare().then(async () => {
         notification.chat_id,
         "guest"
       );
-      const participationData = await findParticipationData(newParticipation.id);
+      const participationData = await findParticipationData(
+        newParticipation.id
+      );
       const chatData = await findChat(notification.chat.id);
 
       socket.emit("added_chat", chatData);

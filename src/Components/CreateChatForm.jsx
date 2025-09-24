@@ -1,19 +1,28 @@
 "use client";
 import { useState } from "react";
-import { useActualUserProvider } from "../Contexts/ActualUserProvider";
 import { socket } from "../lib/socket";
 import { client as cryptoClient } from "../lib/cryptography";
+import { useKeyProvider } from "../Contexts/KeyProvider";
 
 export default function CreateChatForm({ toggleVisible }) {
   const [title, setTitle] = useState("");
   const [errorState, setErrorState] = useState({ hasError: false });
 
-  const actualUserManager = useActualUserProvider();
+  const keyManager = useKeyProvider();
+  const publicKey = keyManager.publicKey;
   async function handleSubmit(e) {
     e.preventDefault();
+
     const groupKey = await cryptoClient.generateSymmetricKey();
-    const encryptedGroupKey = cryptoClient
-    socket.emit("new_chat", title);
+    const jwtGroupKey = await cryptoClient.exportKeyToJwt(groupKey);
+    const stringJwtGroupKey = JSON.stringify(jwtGroupKey);
+    const encryptedGroupKey = await cryptoClient.asymmetricEncrypt(
+      publicKey,
+      stringJwtGroupKey
+    );
+    const base64EncryptedGroupKey =
+      cryptoClient.arrayBufferToBase64(encryptedGroupKey);
+    socket.emit("new_chat", title, base64EncryptedGroupKey);
     toggleVisible();
   }
 

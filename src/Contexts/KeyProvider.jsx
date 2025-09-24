@@ -1,5 +1,5 @@
 "use client";
-import { createContext, useContext, useState } from "react";
+import { createContext, useContext, useEffect, useState } from "react";
 import { client as cryptoClient } from "../lib/cryptography";
 
 const keyContext = createContext();
@@ -7,13 +7,20 @@ const keyContext = createContext();
 export function KeyProvider({ children }) {
   const [key, setKey] = useState(null);
   const [publicKey, setPublicKey] = useState(null);
+  const [groupKeys, setGroupKeys] = useState(new Map());
   const [privateKey, setPrivateKey] = useState(null);
 
-  const loadAndSetUserKeys = async (
-    publicKey,
-    privateKey,
-    passwordDerivedKey
-  ) => {
+  async function addGroupKey(chatId, key) {
+    const newGroupKeys = new Map(groupKeys);
+    newGroupKeys.set(chatId, key);
+    setGroupKeys(newGroupKeys);
+  }
+
+  async function getGroupKey(chatdId) {
+    return groupKeys.get(chatdId);
+  }
+
+  async function loadAndSetUserKeys(publicKey, privateKey, passwordDerivedKey) {
     const { encryptedKeyHex, ivHex } = privateKey;
     const decryptedJwk = await cryptoClient.symmetricDecrypt(
       { encryptedData: encryptedKeyHex, iv: ivHex },
@@ -39,9 +46,17 @@ export function KeyProvider({ children }) {
         "Failed to decrypt the private key. The password might be wrong."
       );
     }
-  };
+  }
 
-  const ctx = { key, setKey, publicKey, privateKey, loadAndSetUserKeys };
+  const ctx = {
+    key,
+    setKey,
+    publicKey,
+    privateKey,
+    loadAndSetUserKeys,
+    addGroupKey,
+    getGroupKey,
+  };
   return <keyContext.Provider value={ctx}>{children}</keyContext.Provider>;
 }
 

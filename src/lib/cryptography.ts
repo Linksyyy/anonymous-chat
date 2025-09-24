@@ -126,23 +126,42 @@ export const client = {
     );
   },
 
-  async asymmetricEncrypt(privateKey: CryptoKey, dataString: string) {
-    const iv = window.crypto.getRandomValues(new Uint8Array(12));
+  async asymmetricEncrypt(publicKey: CryptoKey, dataString: string) {
     const data = new TextEncoder().encode(dataString);
 
     return await window.crypto.subtle.encrypt(
       { name: "RSA-OAEP" },
-      privateKey,
+      publicKey,
       data
     );
   },
 
-  async asymmetricDecrypt(publlicKey: CryptoKey, encryptedData: ArrayBuffer) {
+  async asymmetricDecrypt(privateKey: CryptoKey, encryptedData: ArrayBuffer) {
     return await window.crypto.subtle.decrypt(
       { name: "RSA-OAEP" },
-      publlicKey,
+      privateKey,
       encryptedData
     );
+  },
+
+  arrayBufferToBase64(buffer: ArrayBuffer) {
+    let binary = "";
+    const bytes = new Uint8Array(buffer);
+    const len = bytes.byteLength;
+    for (let i = 0; i < len; i++) {
+      binary += String.fromCharCode(bytes[i]);
+    }
+    return window.btoa(binary);
+  },
+
+  base64ToArrayBuffer(base64: string) {
+    const binary_string = window.atob(base64);
+    const len = binary_string.length;
+    const bytes = new Uint8Array(len);
+    for (let i = 0; i < len; i++) {
+      bytes[i] = binary_string.charCodeAt(i);
+    }
+    return bytes.buffer;
   },
 };
 
@@ -161,17 +180,16 @@ export const server = {
     return keys;
   },
 
-  async asymmetricEncrypt(privateKey: CryptoKey, dataString: string) {
-    const iv = crypto.getRandomValues(new Uint8Array(12));
+  async asymmetricEncrypt(publicKey: CryptoKey, dataString: string) {
     const data = new TextEncoder().encode(dataString);
 
-    return await crypto.subtle.encrypt({ name: "RSA-OAEP" }, privateKey, data);
+    return await crypto.subtle.encrypt({ name: "RSA-OAEP" }, publicKey, data);
   },
 
-  async asymmetricDecrypt(publlicKey: CryptoKey, encryptedData: ArrayBuffer) {
+  async asymmetricDecrypt(privateKey: CryptoKey, encryptedData: ArrayBuffer) {
     return await crypto.subtle.decrypt(
       { name: "RSA-OAEP" },
-      publlicKey,
+      privateKey,
       encryptedData
     );
   },
