@@ -1,6 +1,6 @@
 "use client";
 import { createContext, useContext, useState, useEffect } from "react";
-import { useRouter } from "next/navigation";
+import { useRouter, usePathname } from "next/navigation";
 import { useSocket } from "../lib/useSocket";
 import { useKeyProvider } from "./KeyProvider";
 import { client as cryptoClient } from "../lib/cryptography";
@@ -16,18 +16,24 @@ export function ActualUserProvider({ children }) {
   const keyManager = useKeyProvider();
   const privateKey = keyManager.privateKey;
   const router = useRouter();
+  const pathname = usePathname();
+
+  const publicPaths = ["/", "/login", "/register"];
 
   useEffect(() => {
+    if (id) return;
     setId(null);
     setUsername(null);
 
     const performLogoutAndRedirect = async () => {
       await fetch("/api/logout", { method: "POST" });
-      router.push("/login?error=reloaded");
+      if (!publicPaths.includes(pathname)) {
+        router.push("/login?error=reloaded");
+      }
     };
 
     performLogoutAndRedirect();
-  }, [router]);
+  }, [router, publicPaths]);
 
   const updateId = (newId) => {
     const currentUser = JSON.parse(localStorage.getItem("actualUser")) || {};
