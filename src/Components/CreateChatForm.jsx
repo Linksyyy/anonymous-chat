@@ -6,7 +6,6 @@ import { useKeyProvider } from "../Contexts/KeyProvider";
 
 export default function CreateChatForm({ toggleVisible }) {
   const [title, setTitle] = useState("");
-  const [errorState, setErrorState] = useState({ hasError: false });
 
   const keyManager = useKeyProvider();
   const publicKey = keyManager.publicKey;

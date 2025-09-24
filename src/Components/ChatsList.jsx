@@ -33,7 +33,7 @@ export default function ChatsList() {
       setNotifications(resNotf.notifications);
     };
     find();
-  }, [id, setChats]);
+  }, [id, setChats, setNotifications]);
 
   async function handleChatClick(e, chat) {
     actualOpenedChatManager.setTitle(chat.title);

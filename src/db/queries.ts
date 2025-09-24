@@ -1,8 +1,7 @@
-import { and, eq } from "drizzle-orm";
+import { eq } from "drizzle-orm";
 import { db } from "./db";
 import { chats, notifications, participants, users } from "./schemas";
 import { v7 } from "uuid";
-import { randomBytes } from "crypto";
 
 export async function findUser(id: string) {
   const result = await db.select().from(users).where(eq(users.id, id));

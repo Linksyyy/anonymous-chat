@@ -1,5 +1,5 @@
 "use client";
-import { createContext, useContext, useEffect, useState } from "react";
+import { createContext, useContext, useState } from "react";
 import { client as cryptoClient } from "../lib/cryptography";
 
 const keyContext = createContext();
