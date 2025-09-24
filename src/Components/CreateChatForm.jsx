@@ -46,11 +46,6 @@ export default function CreateChatForm({ toggleVisible }) {
           onChange={(e) => setTitle(e.target.value)}
           className="bg-primary-1 rounded-2xl p-1 outline-none px-5"
         />
-        {errorState.hasError && (
-          <h1 className="text-red-400 flex justify-center text-sm">
-            {errorState.message}
-          </h1>
-        )}
 
         <div className="w-full flex justify-evenly gap-4">
           <button
