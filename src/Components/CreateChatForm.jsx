@@ -63,7 +63,8 @@ export default function CreateChatForm({ toggleVisible }) {
           </button>
           <button
             type="submit"
-            className="bg-green-800 hover:bg-green-950 py-1 px-3 rounded-2xl"
+            disabled={!publicKey}
+            className="bg-green-800 hover:bg-green-950 py-1 px-3 rounded-2xl disabled:bg-gray-600 disabled:cursor-not-allowed"
           >
             Create
           </button>
