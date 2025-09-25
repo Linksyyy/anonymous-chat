@@ -16,10 +16,25 @@ export async function login(username: string, preHashedpassword: string) {
   return { ...data, hasError: false };
 }
 
-export async function register(username: string, preHashedpassword: string) {
+export async function register(
+  username: string,
+  preHashedpassword: string,
+  ee_salt: string,
+  pubKey: JsonWebKey,
+  privKey: {
+    iv: string;
+    hexEncryptedData: string;
+  }
+) {
   const res = await fetch("/api/register", {
     method: "POST",
-    body: JSON.stringify({ username, preHashedpassword }),
+    body: JSON.stringify({
+      username,
+      preHashedpassword,
+      ee_salt,
+      pubKey,
+      privKey,
+    }),
   });
 
   let data;

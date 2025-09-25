@@ -6,6 +6,13 @@ import { register } from "../../lib/api";
 import { useRouter } from "next/navigation";
 import { client as cryptoClient } from "../../lib/cryptography";
 
+function randomHex(size) {
+  const buffer = new Uint8Array(size);
+  window.crypto.getRandomValues(buffer);
+  return Array.from(buffer).map(b => b.toString(16).padStart(2, "0")).join("");
+}
+
+
 export default function Register() {
   const [username, setUsername] = useState("");
   const [password, setPassword] = useState("");
@@ -31,7 +38,33 @@ export default function Register() {
       return;
     }
     const preHashedPassword = await cryptoClient.hash(password);
-    const { hasError, message } = await register(username, preHashedPassword);
+    const ee_salt = randomHex(16)
+    const keyPair = await cryptoClient.generateUserKeyPair();
+    const pubKey = await cryptoClient.exportKeyToJwt(keyPair.publicKey);
+    const jwtPrivKey = await cryptoClient.exportKeyToJwt(keyPair.privateKey);
+    const derivedKey = await cryptoClient.deriveKeyFromPassword(
+      password,
+      ee_salt
+    );
+    const encryptedPrivKey = await cryptoClient.symmetricEncrypt(
+      jwtPrivKey,
+      derivedKey
+    );
+    const hexEncryptedData = cryptoClient.bufferToHex(
+      encryptedPrivKey.encryptedData
+    );
+    const ivHex = cryptoClient.bufferToHex(encryptedPrivKey.iv);
+    const privKey = {
+      iv: ivHex,
+      hexEncryptedData: hexEncryptedData,
+    };
+    const { hasError, message } = await register(
+      username,
+      preHashedPassword,
+      ee_salt,
+      pubKey,
+      privKey
+    );
     setErrorState({ hasError, message });
 
     //cant use state error like conditional bc res is async

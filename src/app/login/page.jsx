@@ -55,7 +55,7 @@ function LoginComponent() {
     //cant use the state "error" like conditional bc res is async
     if (!hasError) {
       const derivedKey = await cryptoClient.deriveKeyFromPassword(
-        preHashedPassword,
+        password,
         user.ee_salt
       );
       actualUserManager.setId(user.id);
@@ -115,6 +115,9 @@ function LoginComponent() {
           <Link href="/">
             <button
               type="button"
+              onClick={() => {
+                router.push("/");
+              }}
               className="bg-zinc-600 hover:bg-zinc-700 gap-2 font-bold py-2 px-4 rounded flex items-center"
             >
               <MdCancel /> Cancel

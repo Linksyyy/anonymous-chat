@@ -1,7 +1,7 @@
 import { useEffect } from "react";
 import { socket } from "./socket";
 
-export function useSocket(event, callback) {
+export function useSocket(event: string, callback: (...args: any[]) => void) {
   useEffect(() => {
     socket.on(event, callback);
     return () => {

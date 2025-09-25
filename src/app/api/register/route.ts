@@ -1,8 +1,6 @@
 import { NextRequest, NextResponse } from "next/server";
 import { findUserByUsername, registerUser } from "../../../db/queries";
 import bcrypt from "bcryptjs";
-import { randomBytes } from "node:crypto";
-import { server as cryptoServer } from "../../../lib/cryptography";
 
 const saltRounds = 10;
 
@@ -10,6 +8,9 @@ export async function POST(req: NextRequest) {
   const data = await req.json();
   const username = data.username.trim().toLowerCase();
   const preHashedpassword = data.preHashedpassword.trim();
+  const ee_salt = data.ee_salt;
+  const pubKey = data.pubKey;
+  const privKey = data.privKey;
 
   if (username === "" || preHashedpassword === "")
     return NextResponse.json(
@@ -34,27 +35,8 @@ export async function POST(req: NextRequest) {
 
   try {
     const hashedPassword = await bcrypt.hash(preHashedpassword, saltRounds);
-    const ee_salt = randomBytes(16).toString("hex");
-    const keyPair = await cryptoServer.generateUserKeyPair();
-    const pubKey = await cryptoServer.exportKeyToJwt(keyPair.publicKey);
-    const privKey = await cryptoServer.exportKeyToJwt(keyPair.privateKey);
-    const derivedKey = await cryptoServer.deriveKeyFromPassword(
-      preHashedpassword,
-      ee_salt
-    );
-    const encryptedPrivKey = await cryptoServer.symmetricEncrypt(
-      privKey,
-      derivedKey
-    );
-    const hexEncryptedData = cryptoServer.bufferToHex(
-      encryptedPrivKey.encryptedData
-    );
-    const ivHex = cryptoServer.bufferToHex(encryptedPrivKey.iv);
 
-    await registerUser(username, hashedPassword, ee_salt, pubKey, {
-      iv: ivHex,
-      hexEncryptedData: hexEncryptedData,
-    });
+    await registerUser(username, hashedPassword, ee_salt, pubKey, privKey);
     return NextResponse.json({ message: "Login successful" }, { status: 200 });
   } catch (e) {
     console.error(e);
