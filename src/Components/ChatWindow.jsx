@@ -1,12 +1,22 @@
 "use client";
-import { useState } from "react";
+import { useEffect, useState } from "react";
 import { IoSend } from "react-icons/io5";
 import { useActualOpenedChatProvider } from "../Contexts/ActualOpenedChatProvider";
+import { useKeyProvider } from "../Contexts/KeyProvider";
 
 export default function ChatWindow() {
   const [messages] = useState([]);
+  const [groupKey, setGroupKey] = useState(null);
 
-  const actualOpenedChatManager = useActualOpenedChatProvider();
+  const actualChatManager = useActualOpenedChatProvider();
+  const keyManager = useKeyProvider();
+
+  useEffect(() => {
+    if (actualChatManager.id)
+      (async () => {
+        setGroupKey(await keyManager.getGroupKey(actualChatManager.id));
+      })();
+  }, [actualChatManager.id]);
 
   function handleSubmit(e) {
     e.preventDefault();
@@ -14,13 +24,13 @@ export default function ChatWindow() {
 
   return (
     <main className="h-full overflow-y-auto min-h-0 flex flex-col">
-      {actualOpenedChatManager.id ? (
+      {actualChatManager.id ? (
         <>
           <header className="h-auto px-5 bg-primary-1 text-2xl justify-between flex py-2 items-center">
-            {actualOpenedChatManager.title}
+            {actualChatManager.title}
             {/*DEBUG*/}
             <h6 className="text-sm text-neutral-600 flex">
-              chat id: {actualOpenedChatManager.id}
+              chat id: {actualChatManager.id}
             </h6>
             {/*DEBUG*/}
           </header>
