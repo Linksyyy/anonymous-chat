@@ -12,6 +12,7 @@ export function ActualUserProvider({ children }) {
   const [username, setUsername] = useState(null);
   const [chats, setChats] = useState([]);
   const [notifications, setNotifications] = useState([]);
+  const [initialKeysLoaded, setInitialKeysLoaded] = useState(false);
 
   const keyManager = useKeyProvider();
   const privateKey = keyManager.privateKey;
@@ -21,9 +22,10 @@ export function ActualUserProvider({ children }) {
   const publicPaths = ["/", "/login", "/register"];
 
   useEffect(() => {
-    // This cant be in key provider bc it depends on chats state
     const takeEncryptedGroupKeys = async () => {
-      if (keyManager.key) {
+      if (keyManager.key && chats.length > 0 && !initialKeysLoaded) {
+        setInitialKeysLoaded(true);
+
         const encryptedGroupKeys = JSON.parse(
           localStorage.getItem("encrypted-group-keys")
         );
@@ -32,24 +34,25 @@ export function ActualUserProvider({ children }) {
             encryptedGroupKeys,
             keyManager.key
           );
+
+          if (!decryptedGroupKeys) return;
+
           const groupKeys = new Map(decryptedGroupKeys);
 
-          //Here will delete groupKeys of chats that the user isnt there anymore
           const groupKeysEntries = Array.from(groupKeys.entries());
           const chatsIds = chats.map((chat) => chat.id);
-          groupKeysEntries.map((entrie) => {
+          groupKeysEntries.forEach((entrie) => {
             if (!chatsIds.includes(entrie[0])) {
               groupKeys.delete(entrie[0]);
             }
           });
-
           keyManager.setGroupKeys(groupKeys);
         }
       }
     };
 
     takeEncryptedGroupKeys();
-  }, [keyManager.key, chats]);
+  }, [keyManager.key, chats, initialKeysLoaded]);
 
   useEffect(() => {
     if (id) return;
@@ -91,12 +94,7 @@ export function ActualUserProvider({ children }) {
       encryptedGroupKey
     );
     const jwtGroupKey = JSON.parse(new TextDecoder().decode(decryptedGroupKey));
-    const groupKey = await cryptoClient.importKeyFromJwt(
-      jwtGroupKey,
-      "AES-GCM",
-      ["encrypt", "decrypt"]
-    );
-    keyManager.addGroupKey(chat.id, groupKey);
+    keyManager.addGroupKey(chat.id, jwtGroupKey);
   });
   useSocket("created_notification", (notification) => {
     setNotifications([...notifications, notification]);

@@ -31,6 +31,7 @@
     "dev": "NODE_OPTIONS='--no-deprecation' tsx watch --env-file=.env src/server.ts",
     "build": "next build",
     "start": "NODE_ENV=production tsx src/server.ts",
+    "start:local": "NODE_ENV=production tsx --env-file=.env src/server.ts",
     "db:push": "drizzle-kit push"
   },
   "eslintConfig": {

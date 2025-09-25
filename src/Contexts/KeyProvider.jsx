@@ -10,11 +10,7 @@ export function KeyProvider({ children }) {
   const [groupKeys, setGroupKeys] = useState(new Map());
   const [privateKey, setPrivateKey] = useState(null);
 
-  async function addGroupKey(chatId, groupKey) {
-    const newGroupKeys = new Map(groupKeys);
-    newGroupKeys.set(chatId, await cryptoClient.exportKeyToJwt(groupKey));
-    setGroupKeys(newGroupKeys);
-
+  async function encryptAndStoreGroupKeys(newGroupKeys) {
     const groupKeyEntries = Array.from(newGroupKeys.entries()); //[[key, value],...]
 
     const encryptedGroupKeys = await cryptoClient.symmetricEncrypt(
@@ -34,12 +30,26 @@ export function KeyProvider({ children }) {
     );
   }
 
+  async function addGroupKey(chatId, groupKey) {
+    const newGroupKeys = new Map(groupKeys);
+    newGroupKeys.set(chatId, await groupKey);
+    setGroupKeys(newGroupKeys);
+
+    await encryptAndStoreGroupKeys(newGroupKeys);
+  }
+
   async function getGroupKey(chatdId) {
     return await cryptoClient.importKeyFromJwt(
       groupKeys.get(chatdId),
       "AES-GCM",
       ["decrypt", "encrypt"]
     );
+  }
+
+  async function changeGroupKeys(newGroupKeys) {
+    setGroupKeys(newGroupKeys);
+
+    await encryptAndStoreGroupKeys(newGroupKeys);
   }
 
   async function loadAndSetUserKeys(publicKey, privateKey, passwordDerivedKey) {
@@ -78,7 +88,7 @@ export function KeyProvider({ children }) {
     loadAndSetUserKeys,
     addGroupKey,
     getGroupKey,
-    setGroupKeys,
+    setGroupKeys: changeGroupKeys,
   };
   return <keyContext.Provider value={ctx}>{children}</keyContext.Provider>;
 }
