@@ -21,6 +21,37 @@ export function ActualUserProvider({ children }) {
   const publicPaths = ["/", "/login", "/register"];
 
   useEffect(() => {
+    // This cant be in key provider bc it depends on chats state
+    const takeEncryptedGroupKeys = async () => {
+      if (keyManager.key) {
+        const encryptedGroupKeys = JSON.parse(
+          localStorage.getItem("encrypted-group-keys")
+        );
+        if (encryptedGroupKeys) {
+          const decryptedGroupKeys = await cryptoClient.symmetricDecrypt(
+            encryptedGroupKeys,
+            keyManager.key
+          );
+          const groupKeys = new Map(decryptedGroupKeys);
+
+          //Here will delete groupKeys of chats that the user isnt there anymore
+          const groupKeysEntries = Array.from(groupKeys.entries());
+          const chatsIds = chats.map((chat) => chat.id);
+          groupKeysEntries.map((entrie) => {
+            if (!chatsIds.includes(entrie[0])) {
+              groupKeys.delete(entrie[0]);
+            }
+          });
+
+          keyManager.setGroupKeys(groupKeys);
+        }
+      }
+    };
+
+    takeEncryptedGroupKeys();
+  }, [keyManager.key, chats]);
+
+  useEffect(() => {
     if (id) return;
     setId(null);
     setUsername(null);

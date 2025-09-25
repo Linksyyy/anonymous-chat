@@ -10,26 +10,6 @@ export function KeyProvider({ children }) {
   const [groupKeys, setGroupKeys] = useState(new Map());
   const [privateKey, setPrivateKey] = useState(null);
 
-  useEffect(() => {
-    const takeEncryptedGroupKeys = async () => {
-      if (key) {
-        const encryptedGroupKeys = JSON.parse(
-          localStorage.getItem("encrypted-group-keys")
-        );
-        if (encryptedGroupKeys) {
-          const decryptedGroupKeys = await cryptoClient.symmetricDecrypt(
-            encryptedGroupKeys,
-            key
-          );
-          setGroupKeys(new Map(decryptedGroupKeys));
-          console.log(decryptedGroupKeys);
-        }
-      }
-    };
-
-    takeEncryptedGroupKeys();
-  }, [key]);
-
   async function addGroupKey(chatId, groupKey) {
     const newGroupKeys = new Map(groupKeys);
     newGroupKeys.set(chatId, await cryptoClient.exportKeyToJwt(groupKey));
@@ -98,6 +78,7 @@ export function KeyProvider({ children }) {
     loadAndSetUserKeys,
     addGroupKey,
     getGroupKey,
+    setGroupKeys,
   };
   return <keyContext.Provider value={ctx}>{children}</keyContext.Provider>;
 }
