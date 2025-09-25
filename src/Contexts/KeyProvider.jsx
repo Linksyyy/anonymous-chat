@@ -1,5 +1,5 @@
 "use client";
-import { createContext, useContext, useState } from "react";
+import { createContext, useContext, useEffect, useState } from "react";
 import { client as cryptoClient } from "../lib/cryptography";
 
 const keyContext = createContext();
@@ -10,14 +10,56 @@ export function KeyProvider({ children }) {
   const [groupKeys, setGroupKeys] = useState(new Map());
   const [privateKey, setPrivateKey] = useState(null);
 
-  function addGroupKey(chatId, key) {
+  useEffect(() => {
+    const takeEncryptedGroupKeys = async () => {
+      if (key) {
+        const encryptedGroupKeys = JSON.parse(
+          localStorage.getItem("encrypted-group-keys")
+        );
+        if (encryptedGroupKeys) {
+          const decryptedGroupKeys = await cryptoClient.symmetricDecrypt(
+            encryptedGroupKeys,
+            key
+          );
+          setGroupKeys(new Map(decryptedGroupKeys));
+          console.log(decryptedGroupKeys);
+        }
+      }
+    };
+
+    takeEncryptedGroupKeys();
+  }, [key]);
+
+  async function addGroupKey(chatId, groupKey) {
     const newGroupKeys = new Map(groupKeys);
-    newGroupKeys.set(chatId, key);
+    newGroupKeys.set(chatId, await cryptoClient.exportKeyToJwt(groupKey));
     setGroupKeys(newGroupKeys);
+
+    const groupKeyEntries = Array.from(newGroupKeys.entries()); //[[key, value],...]
+
+    const encryptedGroupKeys = await cryptoClient.symmetricEncrypt(
+      groupKeyEntries,
+      key
+    );
+    const hexEncryptedData = cryptoClient.bufferToHex(
+      encryptedGroupKeys.encryptedData
+    );
+    const ivHex = cryptoClient.bufferToHex(encryptedGroupKeys.iv);
+    localStorage.setItem(
+      "encrypted-group-keys",
+      JSON.stringify({
+        iv: ivHex,
+        encryptedData: hexEncryptedData,
+      })
+    );
   }
 
-  function getGroupKey(chatdId) {
-    return groupKeys.get(chatdId);
+  async function getGroupKey(chatdId) {
+    return await cryptoClient.importKeyFromJwt(
+      groupKeys.get(chatdId),
+      "AES-GCM",
+      ["decrypt", "encrypt"]
+    );
   }
 
   async function loadAndSetUserKeys(publicKey, privateKey, passwordDerivedKey) {
