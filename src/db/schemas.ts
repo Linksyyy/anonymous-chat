@@ -24,14 +24,14 @@ export const users = pgTable("users", {
 });
 
 export const chats = pgTable("chats", {
-  id: uuid().unique().primaryKey().defaultRandom(),
+  id: uuid().primaryKey().defaultRandom(),
   title: varchar({ length: 255 }),
   created_at: timestamp().defaultNow().notNull(),
   updated_at: timestamp(),
 });
 
 export const participants = pgTable("participants", {
-  id: uuid().unique().primaryKey().defaultRandom(),
+  id: uuid().primaryKey().defaultRandom(),
   user_id: uuid()
     .references(() => users.id)
     .notNull(),
@@ -43,7 +43,7 @@ export const participants = pgTable("participants", {
 });
 
 export const messages = pgTable("messages", {
-  id: uuid().unique().primaryKey().defaultRandom(),
+  id: uuid().primaryKey().defaultRandom(),
   sender_id: uuid()
     .references(() => users.id)
     .notNull(),
@@ -55,7 +55,7 @@ export const messages = pgTable("messages", {
 });
 
 export const notifications = pgTable("notifications", {
-  id: uuid().unique().primaryKey().defaultRandom(),
+  id: uuid().primaryKey().defaultRandom(),
   sender_id: uuid().references(() => users.id),
   receiver_id: uuid().references(() => users.id),
   chat_id: uuid().references(() => chats.id),
