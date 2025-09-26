@@ -14,10 +14,6 @@ export default function ChatWindow() {
   const [groupKey, setGroupKey] = useState(null);
   const [inputMessage, setInputMessage] = useState("");
 
-  useEffect(() => {
-    console.log(groupKey)
-  }, [groupKey])
-
   const actualUserManager = useActualUserProvider();
   const actualChatManager = useActualOpenedChatProvider();
   const keyManager = useKeyProvider();
@@ -71,8 +67,7 @@ export default function ChatWindow() {
 
   async function handleSubmit(e) {
     e.preventDefault();
-    if (!inputMessage.trim() || !groupKey) return; // Validação
-
+    if (!inputMessage.trim() || !groupKey) return;
     const encryptedMessage = await cryptoClient.symmetricEncrypt(
       inputMessage,
       groupKey
@@ -80,7 +75,7 @@ export default function ChatWindow() {
 
     socket.emit("send_message", actualChatManager.id, encryptedMessage);
 
-    setInputMessage(""); // Limpa o input
+    setInputMessage("");
   }
 
   return (

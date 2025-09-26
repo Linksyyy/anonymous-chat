@@ -23,6 +23,7 @@ export function ActualUserProvider({ children }) {
 
   useEffect(() => {
     const takeEncryptedGroupKeys = async () => {
+      if (localStorage.getItem("encrypted-group-keys") === "empty") return;
       if (keyManager.key && chats.length > 0 && !initialKeysLoaded) {
         setInitialKeysLoaded(true);
 
@@ -85,11 +86,14 @@ export function ActualUserProvider({ children }) {
 
   useSocket("added_chat", async (chat, hexEncryptedGroupKey) => {
     if (!privateKey) {
-      console.warn("ActualUserProvider: privateKey is null, cannot decrypt group key.");
+      console.warn(
+        "ActualUserProvider: privateKey is null, cannot decrypt group key."
+      );
       return;
     }
     setChats((prevChats) => [...prevChats, chat]);
-    const encryptedGroupKeyBuffer = cryptoClient.hexToBuffer(hexEncryptedGroupKey);
+    const encryptedGroupKeyBuffer =
+      cryptoClient.hexToBuffer(hexEncryptedGroupKey);
     const decryptedGroupKeyBuffer = await cryptoClient.asymmetricDecrypt(
       privateKey,
       encryptedGroupKeyBuffer
@@ -99,14 +103,20 @@ export function ActualUserProvider({ children }) {
     let jwtGroupKey;
     try {
       jwtGroupKey = JSON.parse(decodedString);
-      console.log("ActualUserProvider: jwtGroupKey (objeto JWK após JSON.parse):", jwtGroupKey);
+      console.log(
+        "ActualUserProvider: jwtGroupKey (objeto JWK após JSON.parse):",
+        jwtGroupKey
+      );
     } catch (error) {
-      console.error("ActualUserProvider: Failed to parse decrypted string to JSON:", error);
+      console.error(
+        "ActualUserProvider: Failed to parse decrypted string to JSON:",
+        error
+      );
       jwtGroupKey = {};
     }
 
     keyManager.addGroupKey(chat.id, jwtGroupKey);
-  });;
+  });
   useSocket("created_notification", (notification) => {
     setNotifications([...notifications, notification]);
   });

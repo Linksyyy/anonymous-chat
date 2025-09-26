@@ -5,7 +5,9 @@ import { socket } from "../../lib/socket";
 
 export default function LoungeLayout({ children }) {
   useEffect(() => {
-    socket.connect()
+    if (!localStorage.getItem("encrypted-group-keys"))
+      localStorage.setItem("encrypted-group-keys", "empty"); // this will prevent some bugs on first chat generation
+    socket.connect();
     socket.on("connect", () => console.log("Connected to socket server"));
   }, []);
   return (
