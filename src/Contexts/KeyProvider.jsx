@@ -17,16 +17,9 @@ export function KeyProvider({ children }) {
       groupKeyEntries,
       key
     );
-    const hexEncryptedData = cryptoClient.bufferToHex(
-      encryptedGroupKeys.encryptedData
-    );
-    const ivHex = cryptoClient.bufferToHex(encryptedGroupKeys.iv);
     localStorage.setItem(
       "encrypted-group-keys",
-      JSON.stringify({
-        iv: ivHex,
-        encryptedData: hexEncryptedData,
-      })
+      JSON.stringify(encryptedGroupKeys)
     );
   }
 

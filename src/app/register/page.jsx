@@ -50,20 +50,13 @@ export default function Register() {
       jwtPrivKey,
       derivedKey
     );
-    const hexEncryptedData = cryptoClient.bufferToHex(
-      encryptedPrivKey.encryptedData
-    );
-    const ivHex = cryptoClient.bufferToHex(encryptedPrivKey.iv);
-    const privKey = {
-      iv: ivHex,
-      hexEncryptedData: hexEncryptedData,
-    };
+
     const { hasError, message } = await register(
       username,
-      preHashedPassword,
+      preHashedpassword,
       ee_salt,
       pubKey,
-      privKey
+      encryptedPrivKey
     );
     setErrorState({ hasError, message });
 

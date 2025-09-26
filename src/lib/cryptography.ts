@@ -38,7 +38,10 @@ export const client = {
       derivedKey,
       dataAsbytes
     );
-    return { iv, encryptedData };
+    return {
+      iv: this.bufferToHex(iv),
+      encryptedData: this.bufferToHex(encryptedData),
+    };
   },
 
   async importKey(keyHex: string) {
