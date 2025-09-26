@@ -2,12 +2,17 @@ import { useState } from "react";
 import { BsPersonAdd } from "react-icons/bs";
 import { socket } from "../lib/socket";
 import { useActualUserProvider } from "../Contexts/ActualUserProvider";
+import { useKeyProvider } from "../Contexts/KeyProvider";
+import { getUserByUsername } from "../lib/api";
+import { client as cryptoClient } from "../lib/cryptography";
 
 export default function ChatInfo({ chat, toggleVisible }) {
   const [inviteSearchVisible, setInviteSearchVisible] = useState(false);
   const [inviteValue, setInviteValue] = useState("");
 
   const { id } = useActualUserProvider();
+  const keyManager = useKeyProvider();
+
   const userParticipation = chat.participants.filter(
     (participation) => participation.user_id === id
   )[0];
@@ -16,9 +21,26 @@ export default function ChatInfo({ chat, toggleVisible }) {
   function toggleInviteSearch() {
     setInviteSearchVisible(inviteSearchVisible ? false : true);
   }
-  function handleinviteParticipant(e) {
+  async function handleInviteParticipant(e) {
     if (e.key === "Enter") {
-      socket.emit("new_invite", inviteValue, chat.id);
+      const user = (await getUserByUsername(inviteValue)).result;
+      const userJwtPublicKey = JSON.parse(user.public_key);
+      const userPublicKey = await cryptoClient.importKeyFromJwt(
+        userJwtPublicKey,
+        "RSA-OAEP",
+        ["encrypt"]
+      );
+
+      const groupKey = await keyManager.getGroupKey(chat.id);
+      const jwtGroupKey = await cryptoClient.exportKeyToJwt(groupKey);
+      const stringJwtGroupKey = JSON.stringify(jwtGroupKey);
+      const encryptedGroupKey = await cryptoClient.asymmetricEncrypt(
+        userPublicKey,
+        stringJwtGroupKey
+      );
+      const hexEncryptedGroupKey = cryptoClient.bufferToHex(encryptedGroupKey);
+
+      socket.emit("new_invite", inviteValue, chat.id, hexEncryptedGroupKey);
       setInviteValue("");
       setInviteSearchVisible(false);
     }
@@ -70,7 +92,7 @@ export default function ChatInfo({ chat, toggleVisible }) {
                 autoFocus
                 value={inviteValue}
                 onChange={(e) => setInviteValue(e.target.value)}
-                onKeyDown={handleinviteParticipant}
+                onKeyDown={handleInviteParticipant}
                 placeholder="Send invite to..."
                 className="bg-primary-0 p-2 outline-none my-3 rounded-xl"
               />

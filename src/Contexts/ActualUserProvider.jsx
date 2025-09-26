@@ -83,19 +83,30 @@ export function ActualUserProvider({ children }) {
     setUsername(newUsername);
   };
 
-  useSocket("added_chat", async (chat, base64EncryptedGroupKey) => {
-    if (!privateKey) return;
-    setChats([...chats, chat]);
-    const encryptedGroupKey = cryptoClient.base64ToArrayBuffer(
-      base64EncryptedGroupKey
-    );
-    const decryptedGroupKey = await cryptoClient.asymmetricDecrypt(
+  useSocket("added_chat", async (chat, hexEncryptedGroupKey) => {
+    if (!privateKey) {
+      console.warn("ActualUserProvider: privateKey is null, cannot decrypt group key.");
+      return;
+    }
+    setChats((prevChats) => [...prevChats, chat]);
+    const encryptedGroupKeyBuffer = cryptoClient.hexToBuffer(hexEncryptedGroupKey);
+    const decryptedGroupKeyBuffer = await cryptoClient.asymmetricDecrypt(
       privateKey,
-      encryptedGroupKey
+      encryptedGroupKeyBuffer
     );
-    const jwtGroupKey = JSON.parse(new TextDecoder().decode(decryptedGroupKey));
+    const decodedString = new TextDecoder().decode(decryptedGroupKeyBuffer);
+
+    let jwtGroupKey;
+    try {
+      jwtGroupKey = JSON.parse(decodedString);
+      console.log("ActualUserProvider: jwtGroupKey (objeto JWK após JSON.parse):", jwtGroupKey);
+    } catch (error) {
+      console.error("ActualUserProvider: Failed to parse decrypted string to JSON:", error);
+      jwtGroupKey = {};
+    }
+
     keyManager.addGroupKey(chat.id, jwtGroupKey);
-  });
+  });;
   useSocket("created_notification", (notification) => {
     setNotifications([...notifications, notification]);
   });

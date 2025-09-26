@@ -62,14 +62,14 @@ function LoginComponent() {
       actualUserManager.setUsername(user.username);
       keyManager.setKey(derivedKey);
 
-      // Decrypt and load the user's key
+      if (!user.encrypted_private_key || !user.public_key) {
+        setErrorState({ hasError: true, message: "User key data is missing. Please re-register or contact support." });
+        return;
+      }
       const encryptedKeyPayload = JSON.parse(user.encrypted_private_key);
       await keyManager.loadAndSetUserKeys(
         JSON.parse(user.public_key),
-        {
-          encryptedKeyHex: encryptedKeyPayload.hexEncryptedData,
-          ivHex: encryptedKeyPayload.iv,
-        },
+        { encryptedKeyHex: encryptedKeyPayload.encryptedData, ivHex: encryptedKeyPayload.iv },
         derivedKey
       );
       router.push("/lounge");

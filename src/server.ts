@@ -6,6 +6,7 @@ import { jwtVerify } from "jose";
 import {
   createChat,
   createInvite,
+  createMessage,
   createParticipant,
   deleteChat,
   deleteNotification,
@@ -59,14 +60,15 @@ app.prepare().then(async () => {
       }
     });
 
-    socket.on("new_invite", async (username, chatId) => {
+    socket.on("new_invite", async (username, chatId, hexEncryptedGroupKey) => {
       const userInvited = await findUserByUsername(username);
       if (!userInvited) return;
       const result = await createInvite(
         user.id,
         userInvited.id,
         chatId,
-        "chat_invite"
+        "chat_invite",
+        hexEncryptedGroupKey
       );
 
       socket
@@ -86,7 +88,7 @@ app.prepare().then(async () => {
       );
       const chatData = await findChat(notification.chat.id);
 
-      socket.emit("added_chat", chatData);
+      socket.emit("added_chat", chatData, notification.encrypted_group_key);
       socket.emit("notification_deleted", notification.id);
       for (let participant of chatData.participants) {
         socket
@@ -121,19 +123,17 @@ app.prepare().then(async () => {
 
     socket.on("join_chat", (chatId) => {
       socket.join(chatId);
-      console.log(`User ${socket.id} joined chat ${chatId}`);
+      console.log(`User ${user.username} joined chat ${chatId}`);
     });
 
     socket.on("leave_chat", (chatId) => {
       socket.leave(chatId);
-      console.log(`User ${socket.id} left chat ${chatId}`);
+      console.log(`User ${user.username} left chat ${chatId}`);
     });
 
-    socket.on("new_message", ({ chatId, message }) => {
-      io.to(chatId).emit("new_message", {
-        senderId: socket.id,
-        message,
-      });
+    socket.on("send_message", async (chatId, encryptedMessage) => {
+      const [message] = await createMessage(user.id, chatId, encryptedMessage);
+      io.to(chatId).emit("message_sended", message);
     });
 
     socket.on("disconnect", () => {

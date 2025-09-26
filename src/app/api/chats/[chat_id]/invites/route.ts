@@ -10,8 +10,9 @@ export async function POST(
   const sender_id = req.headers.get("x-user-id");
   const receiver_id = data.receiver_id;
   const type = data.type;
+  const encrypted_group_key = data.encrypted_group_key
 
-  createInvite(sender_id, receiver_id, chat_id, type);
+  createInvite(sender_id, receiver_id, chat_id, type, encrypted_group_key);
 
   return NextResponse.json(
     { message: "Invite created sucessfully" },

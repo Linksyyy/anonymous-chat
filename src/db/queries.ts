@@ -1,6 +1,6 @@
 import { eq } from "drizzle-orm";
 import { db } from "./db";
-import { chats, notifications, participants, users } from "./schemas";
+import { chats, messages, notifications, participants, users } from "./schemas";
 import { v7 } from "uuid";
 
 export async function findUser(id: string) {
@@ -77,11 +77,12 @@ export async function createInvite(
   sender_id: string,
   receiver_id: string,
   chat_id: string,
-  type: "chat_invite"
+  type: "chat_invite",
+  encrypted_group_key: string
 ) {
   const notification = await db
     .insert(notifications)
-    .values({ chat_id, sender_id, receiver_id, type })
+    .values({ chat_id, sender_id, receiver_id, type, encrypted_group_key })
     .returning();
 
   return db.query.notifications.findFirst({
@@ -96,6 +97,24 @@ export async function createInvite(
       },
     },
   });
+}
+
+export async function createMessage(
+  sender_id: string,
+  chat_id: string,
+  encrypted_message: {
+    iv: string;
+    encryptedData: string;
+  }
+) {
+  return await db
+    .insert(messages)
+    .values({
+      sender_id,
+      chat_id,
+      encrypted_message: JSON.stringify(encrypted_message),
+    })
+    .returning();
 }
 
 export async function findParticipationsOfUser(userId: string) {
@@ -152,6 +171,20 @@ export async function findNotificationsOfuser(user_id: string) {
       },
     },
   });
+}
+
+export async function findMessagesOfChat(
+  chatd_id: string,
+  limit: number,
+  offset: number
+) {
+  return await db
+    .select()
+    .from(messages)
+    .where(eq(messages.chat_id, chatd_id))
+    .orderBy(messages.created_at)
+    .limit(limit)
+    .offset(offset);
 }
 
 export async function deleteNotification(id: string) {

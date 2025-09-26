@@ -19,9 +19,12 @@ export default function CreateChatForm({ toggleVisible }) {
       publicKey,
       stringJwtGroupKey
     );
-    const base64EncryptedGroupKey =
-      cryptoClient.arrayBufferToBase64(encryptedGroupKey);
-    socket.emit("new_chat", title, base64EncryptedGroupKey);
+    const hexEncryptedGroupKey = cryptoClient.bufferToHex(encryptedGroupKey);
+    console.log("CreateChatForm: publicKey used for encryption:", publicKey);
+    console.log("CreateChatForm: stringJwtGroupKey (JSON string antes de criptografar):", stringJwtGroupKey);
+    console.log("CreateChatForm: hexEncryptedGroupKey (hex string enviada):", hexEncryptedGroupKey);
+
+    socket.emit("new_chat", title, hexEncryptedGroupKey);
     toggleVisible();
   }
 

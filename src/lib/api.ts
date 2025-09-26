@@ -107,10 +107,11 @@ export async function postChatInvite(
   sender_id,
   receiver_id,
   chat_id,
-  type: "chat_invite"
+  type: "chat_invite",
+  encrypted_group_key: string
 ) {
   const res = await fetch(`/api/chats/${chat_id}/invites`, {
-    body: JSON.stringify({ receiver_id, type }),
+    body: JSON.stringify({ receiver_id, type, encrypted_group_key }),
     method: "POST",
     headers: { "x-user-id": sender_id },
   });
@@ -129,6 +130,40 @@ export async function postChatInvite(
 
 export async function getNotificationsOfUser(user_id: string) {
   const res = await fetch(`/api/users/${user_id}/notifications`, {
+    method: "GET",
+  });
+
+  let data;
+  try {
+    data = await res.json();
+  } catch (error) {
+    console.error(error);
+    return { message: "Unexpected error", hasError: true };
+  }
+
+  if (res.status !== 200) return { ...data, hasError: true };
+  return { ...data, hasError: false };
+}
+
+export async function getMessagesOfChat(chat_id: string, page: number) {
+  const res = await fetch(`/api/chats/${chat_id}/messages?page=${page}`, {
+    method: "GET",
+  });
+
+  let data;
+  try {
+    data = await res.json();
+  } catch (error) {
+    console.error(error);
+    return { message: "Unexpected error", hasError: true };
+  }
+
+  if (res.status !== 200) return { ...data, hasError: true };
+  return { ...data, hasError: false };
+}
+
+export async function getUserByUsername(username: string) {
+  const res = await fetch(`/api/username/${username}`, {
     method: "GET",
   });
 

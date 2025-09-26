@@ -53,7 +53,7 @@ export default function Register() {
 
     const { hasError, message } = await register(
       username,
-      preHashedpassword,
+      preHashedPassword,
       ee_salt,
       pubKey,
       encryptedPrivKey
