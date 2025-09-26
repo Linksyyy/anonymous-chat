@@ -1,4 +1,4 @@
-import { eq } from "drizzle-orm";
+import { desc, eq } from "drizzle-orm";
 import { db } from "./db";
 import { chats, messages, notifications, participants, users } from "./schemas";
 import { v7 } from "uuid";
@@ -182,7 +182,7 @@ export async function findMessagesOfChat(
     .select()
     .from(messages)
     .where(eq(messages.chat_id, chatd_id))
-    .orderBy(messages.created_at)
+    .orderBy(desc(messages.created_at))
     .limit(limit)
     .offset(offset);
 }
