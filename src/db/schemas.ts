@@ -48,7 +48,7 @@ export const messages = pgTable("messages", {
     .references(() => users.id)
     .notNull(),
   chat_id: uuid()
-    .references(() => chats.id)
+    .references(() => chats.id, {onDelete: "cascade"})
     .notNull(),
   encrypted_message: text("encrypted_message").notNull(),
   created_at: timestamp().defaultNow().notNull(),
