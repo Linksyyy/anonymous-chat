@@ -79,5 +79,5 @@ bun run db:push
 3.  **Production Server:**
 
     ```bash
-    bun run start
+    bun run start:local
     ```
