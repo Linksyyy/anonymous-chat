@@ -107,7 +107,7 @@ export async function createMessage(
     encryptedData: string;
   }
 ) {
-  return await db
+  const [res] = await db
     .insert(messages)
     .values({
       sender_id,
@@ -115,6 +115,20 @@ export async function createMessage(
       encrypted_message: JSON.stringify(encrypted_message),
     })
     .returning();
+
+  return db.query.messages.findFirst({
+    where: eq(messages.id, res.id),
+    with: {
+      sender: {
+        columns: {
+          password_hash: false,
+          encrypted_private_key: false,
+          public_key: false,
+          ee_salt: false,
+        },
+      },
+    },
+  });
 }
 
 export async function findParticipationsOfUser(userId: string) {
@@ -178,13 +192,22 @@ export async function findMessagesOfChat(
   limit: number,
   offset: number
 ) {
-  return await db
-    .select()
-    .from(messages)
-    .where(eq(messages.chat_id, chatd_id))
-    .orderBy(desc(messages.created_at))
-    .limit(limit)
-    .offset(offset);
+  return await db.query.messages.findMany({
+    where: eq(messages.chat_id, chatd_id),
+    limit,
+    offset,
+    orderBy: desc(messages.created_at),
+    with: {
+      sender: {
+        columns: {
+          password_hash: false,
+          encrypted_private_key: false,
+          public_key: false,
+          ee_salt: false,
+        },
+      },
+    },
+  });
 }
 
 export async function deleteNotification(id: string) {

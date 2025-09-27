@@ -132,7 +132,7 @@ app.prepare().then(async () => {
     });
 
     socket.on("send_message", async (chatId, encryptedMessage) => {
-      const [message] = await createMessage(user.id, chatId, encryptedMessage);
+      const message = await createMessage(user.id, chatId, encryptedMessage);
       io.to(chatId).emit("message_sended", message);
     });
 

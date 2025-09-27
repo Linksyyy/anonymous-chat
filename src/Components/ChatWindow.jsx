@@ -93,7 +93,7 @@ export default function ChatWindow() {
           <div className="flex flex-col-reverse flex-1 gap-5 overflow-y-auto p-4">
             {messages.map((message) => (
               <div
-                key={message.id} // Corrigido: Usa o ID da mensagem como chave
+                key={message.id}
                 className={`flex ${
                   message.sender_id === actualUserManager.id
                     ? "justify-end"
@@ -107,6 +107,12 @@ export default function ChatWindow() {
                       : "rounded-bl-none bg-primary-1"
                   }`}
                 >
+                  {!(message.sender_id === actualUserManager.id) && (
+                    <div className="text-sm text-secondary-1">
+                      {message.sender.username || "PLACEHOLDER"}
+                      <br />
+                    </div>
+                  )}
                   {message.text}
                 </div>
               </div>
