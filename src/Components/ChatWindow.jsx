@@ -101,7 +101,7 @@ export default function ChatWindow() {
                 }`}
               >
                 <div
-                  className={`max-w-xs rounded-2xl px-4 py-2 lg:max-w-md ${
+                  className={`max-w-xs rounded-2xl px-4 py-2 lg:max-w-md break-words ${
                     message.sender_id === actualUserManager.id
                       ? "rounded-br-none bg-purple-950"
                       : "rounded-bl-none bg-primary-1"
