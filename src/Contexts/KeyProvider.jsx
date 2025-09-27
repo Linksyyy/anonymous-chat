@@ -10,6 +10,10 @@ export function KeyProvider({ children }) {
   const [groupKeys, setGroupKeys] = useState(new Map());
   const [privateKey, setPrivateKey] = useState(null);
 
+  useEffect(() => {
+    console.log("group keys:", Array.from(groupKeys.entries()))
+  }, [groupKeys])
+
   async function encryptAndStoreGroupKeys(newGroupKeys) {
     const groupKeyEntries = Array.from(newGroupKeys.entries()); //[[key, value],...]
 
@@ -28,6 +32,17 @@ export function KeyProvider({ children }) {
     newGroupKeys.set(chatId, await groupKey);
     setGroupKeys(newGroupKeys);
 
+    await encryptAndStoreGroupKeys(newGroupKeys);
+  }
+
+  async function removeGroupKey(chatId) {
+    const newGroupKeys = new Map(groupKeys);
+    newGroupKeys.delete(chatId);
+    setGroupKeys(newGroupKeys);
+    if (newGroupKeys.size === 0) {
+      localStorage.setItem("encrypted-group-keys", "empty");
+      return;
+    }
     await encryptAndStoreGroupKeys(newGroupKeys);
   }
 
@@ -73,6 +88,13 @@ export function KeyProvider({ children }) {
     }
   }
 
+  function logout() {
+    setKey(null);
+    setPublicKey(null);
+    setGroupKeys(new Map());
+    setPrivateKey(null);
+  }
+
   const ctx = {
     key,
     setKey,
@@ -82,6 +104,8 @@ export function KeyProvider({ children }) {
     addGroupKey,
     getGroupKey,
     setGroupKeys: changeGroupKeys,
+    removeGroupKey,
+    logout,
   };
   return <keyContext.Provider value={ctx}>{children}</keyContext.Provider>;
 }

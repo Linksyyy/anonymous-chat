@@ -24,9 +24,7 @@ export function ActualUserProvider({ children }) {
   useEffect(() => {
     const takeEncryptedGroupKeys = async () => {
       if (localStorage.getItem("encrypted-group-keys") === "empty") return;
-      if (keyManager.key && chats.length > 0 && !initialKeysLoaded) {
-        setInitialKeysLoaded(true);
-
+      if (keyManager.key && !initialKeysLoaded) {
         const encryptedGroupKeys = JSON.parse(
           localStorage.getItem("encrypted-group-keys")
         );
@@ -39,21 +37,14 @@ export function ActualUserProvider({ children }) {
           if (!decryptedGroupKeys) return;
 
           const groupKeys = new Map(decryptedGroupKeys);
-
-          const groupKeysEntries = Array.from(groupKeys.entries());
-          const chatsIds = chats.map((chat) => chat.id);
-          groupKeysEntries.forEach((entrie) => {
-            if (!chatsIds.includes(entrie[0])) {
-              groupKeys.delete(entrie[0]);
-            }
-          });
           keyManager.setGroupKeys(groupKeys);
         }
+        setInitialKeysLoaded(true);
       }
     };
 
     takeEncryptedGroupKeys();
-  }, [keyManager.key, chats, initialKeysLoaded]);
+  }, [keyManager.key, initialKeysLoaded]);
 
   useEffect(() => {
     if (id) return;
@@ -125,6 +116,7 @@ export function ActualUserProvider({ children }) {
   });
   useSocket("chat_deleted", (chatId) => {
     setChats(chats.filter((chat) => chat.id !== chatId));
+    keyManager.removeGroupKey(chatId);
   });
   useSocket("participant_added", (participationData) => {
     const chatIndex = chats.findIndex(
