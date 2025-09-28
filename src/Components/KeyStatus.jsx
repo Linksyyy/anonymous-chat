@@ -1,6 +1,5 @@
 import { useEffect, useState } from "react";
 import { useKeyProvider } from "../Contexts/KeyProvider";
-import { getChatById } from "../lib/api";
 import { FiCheck, FiX } from "react-icons/fi";
 import { useActualUserProvider } from "../Contexts/ActualUserProvider";
 
