@@ -11,11 +11,13 @@ import { useActualOpenedChatProvider } from "../Contexts/ActualOpenedChatProvide
 import CreateChatForm from "./CreateChatForm";
 import ChatInfo from "./ChatInfo";
 import Notifications from "./Notifications";
+import KeyStatus from "./KeyStatus";
 
 export default function ChatsList() {
   const [createVisible, setCreateVisible] = useState(false);
   const [chatInfoVisible, setChatInfoVisible] = useState(false);
   const [notificationsVisible, setNotificationsVisible] = useState(false);
+  const [keyStatusVisible, setKeyStatusVisible] = useState(false);
   const [chatToSeeInfo, setChatToSeeInfo] = useState(null);
 
   const { id, username, chats, setChats, notifications, setNotifications } =
@@ -69,6 +71,13 @@ export default function ChatsList() {
               }
             />
           )}
+          {keyStatusVisible && (
+            <KeyStatus
+              toggleVisible={() =>
+                setKeyStatusVisible(keyStatusVisible ? false : true)
+              }
+            />
+          )}
           <div className="w-full justify-between flex">
             <MdOutlineMailOutline
               onClick={() =>
@@ -81,10 +90,19 @@ export default function ChatsList() {
                 <div className="w-2 h-2 bg-red-600 rounded-full" />
               </div>
             )}
-            <IoMdAddCircleOutline
-              onClick={() => setCreateVisible(createVisible ? false : true)}
-              className="cursor-pointer text-white hover:text-gray-400 size-8"
-            />
+            <div className="flex gap-4">
+              <HiOutlineKey
+                onClick={() =>
+                  setKeyStatusVisible(keyStatusVisible ? false : true)
+                }
+                className="cursor-pointer text-white hover:text-gray-400 size-8"
+              />
+
+              <IoMdAddCircleOutline
+                onClick={() => setCreateVisible(createVisible ? false : true)}
+                className="cursor-pointer text-white hover:text-gray-400 size-8"
+              />
+            </div>
           </div>
         </div>
       </header>

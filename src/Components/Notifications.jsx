@@ -2,7 +2,6 @@
 import { FiCheck, FiX } from "react-icons/fi";
 import { socket } from "../lib/socket";
 import { useKeyProvider } from "../Contexts/KeyProvider";
-import { client as cryptoClient } from "../lib/cryptography";
 
 export default function Notifications({ toggleVisible, notifications }) {
   const keyManager = useKeyProvider();

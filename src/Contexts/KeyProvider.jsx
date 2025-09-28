@@ -101,6 +101,7 @@ export function KeyProvider({ children }) {
     publicKey,
     privateKey,
     loadAndSetUserKeys,
+    groupKeys,
     addGroupKey,
     getGroupKey,
     setGroupKeys: changeGroupKeys,
