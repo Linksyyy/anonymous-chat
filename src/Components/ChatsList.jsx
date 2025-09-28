@@ -53,19 +53,17 @@ export default function ChatsList() {
             />
           )}
           <div className="w-full justify-between flex">
-            <button
+            <MdOutlineMailOutline
               onClick={() =>
                 setNotificationsVisible(notificationsVisible ? false : true)
               }
-              className="cursor-pointer text-white hover:text-gray-400 relative"
-            >
-              <MdOutlineMailOutline className="size-8" />
-              {notifications.length > 0 && (
-                <div className="absolute top-1 right-0 bg-primary-0 w-3 h-3 rounded-full flex items-center justify-center">
-                  <div className="w-2 h-2 bg-red-600 rounded-full" />
-                </div>
-              )}
-            </button>
+              className="cursor-pointer text-white hover:text-gray-400 relative size-8"
+            />
+            {notifications.length > 0 && (
+              <div className="absolute top-1 right-0 bg-primary-0 w-3 h-3 rounded-full flex items-center justify-center">
+                <div className="w-2 h-2 bg-red-600 rounded-full" />
+              </div>
+            )}
             {notificationsVisible && (
               <Notifications
                 toggleVisible={() =>
@@ -74,12 +72,10 @@ export default function ChatsList() {
                 notifications={notifications}
               />
             )}
-            <button
+            <IoMdAddCircleOutline
               onClick={() => setCreateVisible(createVisible ? false : true)}
-              className="cursor-pointer text-white hover:text-gray-400"
-            >
-              <IoMdAddCircleOutline className="size-8" />
-            </button>
+              className="cursor-pointer text-white hover:text-gray-400 size-8"
+            />
           </div>
         </div>
       </header>
@@ -109,15 +105,13 @@ export default function ChatsList() {
               {chat.title}
             </h2>
           </button>
-          <button
+          <FaInfoCircle
+            className="w-2/10 absolute right-0 justify-center flex items-center opacity-0 group-hover:opacity-100 transition-opacity cursor-pointer hover:text-neutral-400 size-5"
             onClick={() => {
               setChatInfoVisible(chatInfoVisible ? false : true);
               setChatToSeeInfo(chat);
             }}
-            className="w-2/10 absolute right-0 justify-center flex items-center opacity-0 group-hover:opacity-100 transition-opacity cursor-pointer hover:text-neutral-400"
-          >
-            <FaInfoCircle className="size-5" />
-          </button>
+          />
         </div>
       ))}
       <footer className="absolute bottom-0 bg-primary-1 w-full flex items-center justify-center h-1/18">
