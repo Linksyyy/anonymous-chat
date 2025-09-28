@@ -2,6 +2,7 @@
 import { useEffect, useState } from "react";
 import { IoMdAddCircleOutline } from "react-icons/io";
 import { MdOutlineMailOutline } from "react-icons/md";
+import { HiOutlineKey } from "react-icons/hi";
 import { FaInfoCircle } from "react-icons/fa";
 import { TiGroup } from "react-icons/ti";
 import { getNotificationsOfUser, getParticipationsOfUser } from "../lib/api";
@@ -52,6 +53,22 @@ export default function ChatsList() {
               I
             />
           )}
+          {notificationsVisible && (
+            <Notifications
+              toggleVisible={() =>
+                setNotificationsVisible(notificationsVisible ? false : true)
+              }
+              notifications={notifications}
+            />
+          )}
+          {chatInfoVisible && (
+            <ChatInfo
+              chat={chatToSeeInfo}
+              toggleVisible={() =>
+                setChatInfoVisible(chatInfoVisible ? false : true)
+              }
+            />
+          )}
           <div className="w-full justify-between flex">
             <MdOutlineMailOutline
               onClick={() =>
@@ -64,14 +81,6 @@ export default function ChatsList() {
                 <div className="w-2 h-2 bg-red-600 rounded-full" />
               </div>
             )}
-            {notificationsVisible && (
-              <Notifications
-                toggleVisible={() =>
-                  setNotificationsVisible(notificationsVisible ? false : true)
-                }
-                notifications={notifications}
-              />
-            )}
             <IoMdAddCircleOutline
               onClick={() => setCreateVisible(createVisible ? false : true)}
               className="cursor-pointer text-white hover:text-gray-400 size-8"
@@ -79,14 +88,7 @@ export default function ChatsList() {
           </div>
         </div>
       </header>
-      {chatInfoVisible && (
-        <ChatInfo
-          chat={chatToSeeInfo}
-          toggleVisible={() =>
-            setChatInfoVisible(chatInfoVisible ? false : true)
-          }
-        />
-      )}
+
       {chats.map((chat, index) => (
         <div
           key={index}
