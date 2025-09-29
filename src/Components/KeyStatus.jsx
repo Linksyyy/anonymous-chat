@@ -20,33 +20,39 @@ export default function KeyStatus({ toggleVisible }) {
   }, [keyManager.groupKeys]);
 
   return (
-    <div onClick={toggleVisible} className="fixed inset-0 z-10">
+    <div onClick={toggleVisible} className="fixed inset-0 z-40">
       <div
         onClick={(e) => e.stopPropagation()}
-        className="absolute top-12 left-45 bg-primary-1 rounded-tl-none rounded-4xl shadow-lg w-120 ring-1 ring-primary-2"
+        className="absolute top-15 left-0 bg-primary-1 rounded-lg shadow-lg w-60 max-w-xs ring-1 ring-primary-2"
       >
-        <div className="p-4 border-b border-primary-2">
-          <h2 className="text-lg font-semibold">Keys Manager</h2>
+        <div className="p-3 border-b border-primary-2 flex items-center justify-between">
+          <h2 className="text-md font-semibold">Keys Manager</h2>
+          <FiX
+            onClick={toggleVisible}
+            className="size-8 hover:text-neutral-500 cursor-pointer"
+          />
         </div>
-        <div className="px-4">
-          {!actualUserManager.chats === 0 ? (
-            <div className="flex justify-center items-center">
-              <p className="text-gray-400">
-                You aren't into any chat to have keys
+        <div className="p-2">
+          {actualUserManager.chats.length === 0 ? (
+            <div className="flex justify-center items-center p-4">
+              <p className="text-gray-400 text-center text-sm">
+                You aren't in any chat to have keys.
               </p>
             </div>
           ) : (
-            <ul>
+            <ul className="max-h-64 overflow-y-auto">
               {actualUserManager.chats.map((chat) => (
                 <li
                   key={chat.id}
-                  className="px-6 flex py-2 justify-between border-primary-2 not-last:border-b-1"
+                  className="px-4 py-2 flex justify-between items-center border-primary-2 not-last:border-b"
                 >
-                  <h2 className="text-xl h-10 trucante flex items-center">{chat.title}</h2>
+                  <h2 className="text-lg truncate flex items-center">
+                    {chat.title}
+                  </h2>
                   {keys?.get(chat.id) ? (
-                    <FiCheck className="size-8 text-green-600" />
+                    <FiCheck className="size-6 text-green-500" />
                   ) : (
-                    <FiX className="size-8 text-red-800" />
+                    <FiX className="size-6 text-red-500" />
                   )}
                 </li>
               ))}

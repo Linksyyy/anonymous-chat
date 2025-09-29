@@ -70,17 +70,17 @@ export default function Register() {
     <div className="fixed inset-0 flex items-center justify-center overflow-y-auto z-50">
       <form
         onSubmit={handleSubmit}
-        className="bg-primary-1 w-full max-w-md gap-10 rounded-2xl p-8 flex flex-col"
+        className="bg-primary-1 max-w-md w-10/12 gap-4 md:gap-8 rounded-2xl p-8 flex flex-col"
       >
         {errorState.hasError && (
-          <h1 className="text-red-400 justify-center flex">
+          <h1 className="text-red-400 text-sm md:text-lg justify-center flex text-center">
             {errorState.message}
           </h1>
         )}
-        <h1 className="text-4xl p-1 justify-center flex mb-4 font-extrabold">
+        <h1 className="text-3xl md:text-4xl justify-center flex font-extrabold">
           Register
         </h1>
-        <div className="mb-4">
+        <div className="mb-1">
           <label className="text-lg mb-1">User</label>
           <input
             autoFocus
@@ -88,7 +88,7 @@ export default function Register() {
             type="text"
             value={username}
             onChange={(e) => setUsername(e.target.value)}
-            className="w-full p-2 text-lg bg-primary-2 mt-1 h-10 rounded"
+            className="w-full p-2 text-lg bg-primary-2 mt-1 h-8 md:h-10 rounded"
           />
         </div>
         <div>
@@ -98,7 +98,7 @@ export default function Register() {
             type="password"
             value={password}
             onChange={(e) => setPassword(e.target.value)}
-            className="w-full p-2 text-lg bg-primary-2 mt-1 h-10 rounded"
+            className="w-full p-2 text-lg bg-primary-2 mt-1 h-8 md:h-10 rounded"
           />
         </div>
         <div>
@@ -108,21 +108,21 @@ export default function Register() {
             type="password"
             value={confPassword}
             onChange={(e) => setConfPassword(e.target.value)}
-            className="w-full p-2 text-lg bg-primary-2 mt-1 h-10 rounded"
+            className="w-full p-2 text-lg bg-primary-2 mt-1 h-8 md:h-10 rounded"
           />
         </div>
-        <div className="flex justify-between mt-10">
+        <div className="flex justify-between mt-5 md:mt-10">
           <Link href="/">
             <button
               type="button"
-              className="bg-zinc-600 hover:bg-zinc-700 gap-2 font-bold py-2 px-4 rounded flex items-center"
+              className="bg-zinc-600 hover:bg-zinc-700 gap-2 font-bold py-2 px-4 rounded flex items-center text-sm md:text-lg"
             >
               <MdCancel /> Cancel
             </button>
           </Link>
           <button
             type="submit"
-            className="bg-green-600 hover:bg-green-700 gap-2 font-bold py-2 px-4 rounded flex items-center"
+            className="bg-green-600 hover:bg-green-700 gap-2 font-bold py-2 px-4 rounded flex items-center text-sm md:text-lg"
           >
             Register <MdCreate />
           </button>
