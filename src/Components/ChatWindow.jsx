@@ -21,10 +21,15 @@ export default function ChatWindow() {
   useEffect(() => {
     if (actualChatManager.id) {
       (async () => {
-        const currentGroupKey = await keyManager.getGroupKey(
-          actualChatManager.id
-        );
-        setGroupKey(currentGroupKey);
+        let currentGroupKey;
+        try {
+          currentGroupKey = await keyManager.getGroupKey(actualChatManager.id);
+          setGroupKey(currentGroupKey);
+        } catch (e) {
+          setGroupKey(undefined);
+        }
+
+        if (!currentGroupKey) return;
 
         const encryptedMessages = (
           await getMessagesOfChat(actualChatManager.id, 1)
@@ -90,57 +95,67 @@ export default function ChatWindow() {
             </h6>
             {/*DEBUG*/}
           </header>
-          <div className="flex flex-col-reverse flex-1 gap-5 overflow-y-auto p-4">
-            {messages.map((message) => (
-              <div
-                key={message.id}
-                className={`flex ${
-                  message.sender_id === actualUserManager.id
-                    ? "justify-end"
-                    : "justify-start"
-                }`}
-              >
-                <div
-                  className={`max-w-xs rounded-2xl px-4 py-2 lg:max-w-md break-words ${
-                    message.sender_id === actualUserManager.id
-                      ? "rounded-br-none bg-purple-950"
-                      : "rounded-bl-none bg-primary-1"
-                  }`}
-                >
-                  {!(message.sender_id === actualUserManager.id) && (
-                    <div className="text-sm text-secondary-1">
-                      {message.sender.username || "PLACEHOLDER"}
-                      <br />
+          {groupKey ? (
+            <>
+              <div className="flex flex-col-reverse flex-1 gap-5 overflow-y-auto p-4">
+                {messages.map((message) => (
+                  <div
+                    key={message.id}
+                    className={`flex ${
+                      message.sender_id === actualUserManager.id
+                        ? "justify-end"
+                        : "justify-start"
+                    }`}
+                  >
+                    <div
+                      className={`max-w-xs rounded-2xl px-4 py-2 lg:max-w-md break-words ${
+                        message.sender_id === actualUserManager.id
+                          ? "rounded-br-none bg-purple-950"
+                          : "rounded-bl-none bg-primary-1"
+                      }`}
+                    >
+                      {!(message.sender_id === actualUserManager.id) && (
+                        <div className="text-sm text-secondary-1">
+                          {message.sender.username || "PLACEHOLDER"}
+                          <br />
+                        </div>
+                      )}
+                      {message.text}
                     </div>
-                  )}
-                  {message.text}
-                </div>
+                  </div>
+                ))}
               </div>
-            ))}
-          </div>
-          <footer className="p-2">
-            <form
-              onSubmit={handleSubmit}
-              className="flex items-center rounded-full bg-primary-2 px-4 py-2"
-            >
-              <input
-                autoFocus
-                type="text"
-                value={inputMessage}
-                onChange={(e) => {
-                  setInputMessage(e.target.value);
-                }}
-                placeholder="Type your message..."
-                className="flex-1 bg-transparent outline-none"
-              />
-              <button
-                type="submit"
-                className="ml-2 flex h-8 w-8 items-center justify-center rounded-full bg-secondary-0 text-white transition-colors hover:bg-secondary-1 focus:outline-none focus:ring-2"
-              >
-                <IoSend />
-              </button>
-            </form>
-          </footer>
+              <footer className="p-2">
+                <form
+                  onSubmit={handleSubmit}
+                  className="flex items-center rounded-full bg-primary-2 px-4 py-2"
+                >
+                  <input
+                    autoFocus
+                    type="text"
+                    value={inputMessage}
+                    onChange={(e) => {
+                      setInputMessage(e.target.value);
+                    }}
+                    placeholder="Type your message..."
+                    className="flex-1 bg-transparent outline-none"
+                  />
+                  <button
+                    type="submit"
+                    className="ml-2 flex h-8 w-8 items-center justify-center rounded-full bg-secondary-0 text-white transition-colors hover:bg-secondary-1 focus:outline-none focus:ring-2"
+                  >
+                    <IoSend />
+                  </button>
+                </form>
+              </footer>
+            </>
+          ) : (
+            <div className="flex flex-1 justify-center items-center text-neutral-500">
+              You haven't the encryption key of&nbsp;
+              <span className="font-bold"> {actualChatManager.title}</span>,
+              please request it for another user
+            </div>
+          )}
         </>
       ) : (
         <div className="h-full items-center flex justify-center text-neutral-500">
