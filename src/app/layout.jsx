@@ -7,12 +7,15 @@ import { useState } from "react";
 import { useSocket } from "../lib/useSocket";
 
 export default function RootLayout({ children }) {
-  const [errorState, setErrorState] = useState(null);
+  const [errorState, setErrorState] = useState({
+    message: null,
+    hasError: false,
+  });
 
   useSocket("feedback", ({ message, hasError }) => {
     setErrorState({ message, hasError });
     setTimeout(() => {
-      setErrorState(null);
+      setErrorState({ message: null, hasError });
     }, 1500);
   });
   return (
@@ -27,14 +30,12 @@ export default function RootLayout({ children }) {
               <section className="flex w-full justify-center">
                 <div
                   className={`fixed justify-center px-5 h-10 z-100 rounded-3xl flex items-center transition-transform transform duration-500 ease-in-out
-                    ${errorState ? "translate-y-3" : "-translate-y-full"}
                     ${
-                      errorState && errorState.hasError
-                        ? "bg-red-600"
-                        : "bg-green-600"
-                    }`}
+                      errorState.message ? "translate-y-3" : "-translate-y-full"
+                    }
+                    ${errorState.hasError ? "bg-red-800" : "bg-green-700"}`}
                 >
-                  {errorState && errorState.message}
+                  {errorState.message}
                 </div>
               </section>
               <ActualOpenedChatProvider>{children}</ActualOpenedChatProvider>
