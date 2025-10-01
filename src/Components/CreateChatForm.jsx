@@ -31,7 +31,7 @@ export default function CreateChatForm({ toggleVisible }) {
   return (
     <div
       onClick={toggleVisible}
-      className="fixed inset-0 bg-secondary-0/16 flex items-center justify-center z-1"
+      className="fixed inset-0 bg-secondary-0/16 flex items-center justify-center z-40"
     >
       <form
         onClick={(e) => e.stopPropagation()}
