@@ -97,7 +97,7 @@ export default function ChatWindow() {
           </header>
           {groupKey ? (
             <>
-              <div className="flex flex-col-reverse flex-1 gap-5 overflow-y-auto p-4">
+              <div className="flex flex-col-reverse flex-1 gap-5 overflow-y-auto p-4 mb-25 md:mb-15">
                 {messages.map((message) => (
                   <div
                     key={message.id}
@@ -125,7 +125,7 @@ export default function ChatWindow() {
                   </div>
                 ))}
               </div>
-              <footer className="p-2">
+              <footer className="absolute p-2 bottom-2 w-full">
                 <form
                   onSubmit={handleSubmit}
                   className="flex items-center rounded-full bg-primary-2 px-4 py-2"

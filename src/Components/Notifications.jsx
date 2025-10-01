@@ -27,22 +27,8 @@ export default function Notifications({ toggleVisible, notifications }) {
           {notifications && notifications.length > 0 ? (
             <ul className="space-y-2">
               {notifications.map((notification, index) => (
-                <div key={index} className="relative">
-                  <div className="absolute flex items-center justify-end inset-0 opacity-0 bg-cover hover:bg-gradient-to-r from-transparent via-primary-2 to-primary-2 hover:opacity-100 rounded-lg z-50 transition-opacity gap-2">
-                    <button
-                      onClick={() => handleAcceptInvite(notification)}
-                      className="hover:text-neutral-500 cursor-pointer"
-                    >
-                      <FiCheck className="size-8" />
-                    </button>
-                    <button
-                      onClick={() => handleDenyInvite(notification)}
-                      className="hover:text-neutral-500 cursor-pointer"
-                    >
-                      <FiX className="size-8" />
-                    </button>
-                  </div>
-                  <li className="p-2">
+                <div key={index} className="flex items-center md:relative">
+                  <li className="p-2 flex-grow">
                     {notification.type === "chat_invite" && (
                       <>
                         <p className="font-semibold">Chat invite</p>
@@ -59,6 +45,20 @@ export default function Notifications({ toggleVisible, notifications }) {
                       </>
                     )}
                   </li>
+                  <div className="flex items-center justify-end gap-2 p-2 md:p-0 md:absolute md:inset-0 md:bg-cover md:rounded-lg md:z-50 md:opacity-0 md:hover:opacity-100 md:hover:bg-gradient-to-r from-transparent via-primary-2 to-primary-2">
+                    <button
+                      onClick={() => handleAcceptInvite(notification)}
+                      className="hover:text-neutral-500 cursor-pointer"
+                    >
+                      <FiCheck className="size-8" />
+                    </button>
+                    <button
+                      onClick={() => handleDenyInvite(notification)}
+                      className="hover:text-neutral-500 cursor-pointer"
+                    >
+                      <FiX className="size-8" />
+                    </button>
+                  </div>
                 </div>
               ))}
             </ul>

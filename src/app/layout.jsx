@@ -25,19 +25,19 @@ export default function RootLayout({ children }) {
       </head>
       <html className="h-full">
         <body className="h-full bg-primary-0 text-white flex">
-          <KeyProvider>
-            <ActualUserProvider>
-              <section className="flex w-full justify-center">
-                <div
-                  className={`fixed justify-center px-5 h-10 z-100 rounded-3xl flex items-center transition-transform transform duration-500 ease-in-out
+          <section className="flex w-full justify-center">
+            <div
+              className={`fixed justify-center px-5 h-10 z-100 rounded-3xl flex items-center transition-transform transform duration-500 ease-in-out
                     ${
                       errorState.message ? "translate-y-3" : "-translate-y-full"
                     }
                     ${errorState.hasError ? "bg-red-800" : "bg-green-700"}`}
-                >
-                  {errorState.message}
-                </div>
-              </section>
+            >
+              {errorState.message}
+            </div>
+          </section>
+          <KeyProvider>
+            <ActualUserProvider>
               <ActualOpenedChatProvider>{children}</ActualOpenedChatProvider>
             </ActualUserProvider>
           </KeyProvider>
