@@ -56,6 +56,10 @@ app.prepare().then(async () => {
         await createParticipant(user.id, chatCreated.id, "admin");
         const chatData = await findChat(chatCreated.id);
 
+        io.to(socket.id).emit("feedback", {
+          message: `Chat "${chatCreated.title}" created sucessfully`,
+          hasError: false,
+        });
         socket.emit("added_chat", chatData, encryptedGroupKey);
       }
     });
@@ -67,12 +71,24 @@ app.prepare().then(async () => {
       const isUserAlreadyOnChat = !!userInvited.participantions.filter(
         (participation) => participation.chat_id === chatId
       )[0];
-      if (isUserAlreadyOnChat) return;
+      if (isUserAlreadyOnChat) {
+        io.to(socket.id).emit("feedback", {
+          message: `This user already is on chat`,
+          hasError: true,
+        });
+        return;
+      }
 
       const isUserAlreadyInvited = !!userInvited.notificationsReceived.filter(
         (notification) => notification.chat_id === chatId
       )[0];
-      if (isUserAlreadyInvited) return;
+      if (isUserAlreadyInvited) {
+        io.to(socket.id).emit("feedback", {
+          message: `This user already was invited`,
+          hasError: true,
+        });
+        return;
+      }
 
       const result = await createInvite(
         user.id,
@@ -82,6 +98,10 @@ app.prepare().then(async () => {
         hexEncryptedGroupKey
       );
 
+      io.to(socket.id).emit("feedback", {
+        message: `Invite sended sucessful`,
+        hasError: false,
+      });
       socket
         .to(socketsMap.get(userInvited.id))
         .emit("created_notification", result);
@@ -130,6 +150,10 @@ app.prepare().then(async () => {
         }
       }
       deleteChat(chatData.id);
+      io.to(socket.id).emit("feedback", {
+        message: `Chat deleted sucessfully`,
+        hasError: false,
+      });
     });
 
     socket.on("join_chat", (chatId) => {
