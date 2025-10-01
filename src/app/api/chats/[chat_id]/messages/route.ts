@@ -10,7 +10,7 @@ export async function GET(req: NextRequest, { params }) {
   const offset = (page - 1) * MESSAGE_OFFSET;
   try {
     const result = await findMessagesOfChat(chatId, MESSAGE_OFFSET, offset);
-    console.log(result)
+
     return NextResponse.json({ result }, { status: 200 });
   } catch (e) {
     console.error("Failed to fetch messages:", e);

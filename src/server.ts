@@ -63,6 +63,17 @@ app.prepare().then(async () => {
     socket.on("new_invite", async (username, chatId, hexEncryptedGroupKey) => {
       const userInvited = await findUserByUsername(username);
       if (!userInvited) return;
+
+      const isUserAlreadyOnChat = !!userInvited.participantions.filter(
+        (participation) => participation.chat_id === chatId
+      )[0];
+      if (isUserAlreadyOnChat) return;
+
+      const isUserAlreadyInvited = !!userInvited.notificationsReceived.filter(
+        (notification) => notification.chat_id === chatId
+      )[0];
+      if (isUserAlreadyInvited) return;
+
       const result = await createInvite(
         user.id,
         userInvited.id,

@@ -65,7 +65,7 @@ export const notifications = pgTable("notifications", {
 });
 // User -> Participant & notifications
 export const usersRelations = relations(users, ({ many }) => ({
-  participants: many(participants),
+  participantions: many(participants),
   notificationsSent: many(notifications, { relationName: "sender" }), // user → notificações enviadas
   notificationsReceived: many(notifications, { relationName: "receiver" }), // user → notificações recebidas
 }));

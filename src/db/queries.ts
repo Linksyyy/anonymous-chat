@@ -9,11 +9,14 @@ export async function findUser(id: string) {
 }
 
 export async function findUserByUsername(username: string) {
-  const result = await db
-    .select()
-    .from(users)
-    .where(eq(users.username, username));
-  return result[0];
+  const result = await db.query.users.findFirst({
+    where: eq(users.username, username),
+    with: {
+      notificationsReceived: true,
+      participantions: true,
+    },
+  });
+  return result;
 }
 
 export async function registerUser(
