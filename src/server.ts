@@ -147,6 +147,10 @@ app.prepare().then(async () => {
         const targetSocketId = socketsMap.get(participation.user.id);
         if (targetSocketId) {
           io.to(targetSocketId).emit("chat_deleted", chatData.id);
+          io.to(targetSocketId).emit("feedback", {
+            message: `"${chatData.title}" has been deleted`,
+            hasError: true,
+          });
         }
       }
       deleteChat(chatData.id);
@@ -169,6 +173,20 @@ app.prepare().then(async () => {
     socket.on("send_message", async (chatId, encryptedMessage) => {
       const message = await createMessage(user.id, chatId, encryptedMessage);
       io.to(chatId).emit("message_sended", message);
+    });
+
+    socket.on("exit_chat", async (chatData) => {
+      const userParticipation = chatData.participants.filter(
+        (p) => p.user_id === user.id
+      )[0];
+
+      await deleteParticipation(userParticipation.id);
+
+      io.to(socketsMap.get(user.id)).emit("chat_deleted", chatData.id);
+      io.to(socket.id).emit("feedback", {
+        message: `You lefted the chat "${chatData.title}"`,
+        hasError: false,
+      });
     });
 
     socket.on("disconnect", () => {
