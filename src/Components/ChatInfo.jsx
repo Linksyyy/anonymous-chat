@@ -6,10 +6,12 @@ import { useActualUserProvider } from "../Contexts/ActualUserProvider";
 import { useKeyProvider } from "../Contexts/KeyProvider";
 import { getUserByUsername } from "../lib/api";
 import { client as cryptoClient } from "../lib/cryptography";
+import { useSocket } from "../lib/useSocket";
 
 export default function ChatInfo({ chat, toggleVisible }) {
   const [inviteSearchVisible, setInviteSearchVisible] = useState(false);
   const [inviteValue, setInviteValue] = useState("");
+  const [participants, setParticipants] = useState(chat.participants);
 
   const { id } = useActualUserProvider();
   const keyManager = useKeyProvider();
@@ -46,14 +48,25 @@ export default function ChatInfo({ chat, toggleVisible }) {
       setInviteSearchVisible(false);
     }
   }
+
+  useSocket("participant_added", (participantData) => {
+    setParticipants([...participants, participantData]);
+  });
+
+  useSocket("participant_deleted", (_, participaionId) => {
+    setParticipants(participants.filter((p) => p.id !== participaionId));
+  });
+
   function handleDeleteChat() {
     socket.emit("delete_chat", chat.id);
     toggleVisible();
   }
+
   function handleExitChat() {
     socket.emit("exit_chat", chat);
     toggleVisible();
   }
+
   return (
     <div
       onClick={toggleVisible}
@@ -109,7 +122,7 @@ export default function ChatInfo({ chat, toggleVisible }) {
             )}
           </div>
           <ul className="space-y-3">
-            {chat.participants.map((participant, index) => (
+            {participants.map((participant, index) => (
               <li
                 key={index}
                 className="bg-primary-2 p-3 rounded-2xl text-sm flex justify-between items-center"

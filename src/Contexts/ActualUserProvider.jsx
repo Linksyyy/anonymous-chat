@@ -132,6 +132,17 @@ export function ActualUserProvider({ children }) {
 
     setChats(newChats);
   });
+  useSocket("participant_deleted", (chatId, participaionId) => {
+    const chatIndex = chats.findIndex((chat) => chat.id === chatId);
+    if (chatIndex === -1) return;
+
+    let newChats = chats;
+    newChats[chatIndex].participants = chats[chatIndex].participants.filter(
+      (p) => p.id !== participaionId
+    );
+
+    setChats(newChats);
+  });
 
   const ctx = {
     id,

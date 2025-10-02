@@ -182,6 +182,13 @@ app.prepare().then(async () => {
 
       await deleteParticipation(userParticipation.id);
 
+      chatData.participants.forEach((p) => {
+        io.to(socketsMap.get(p.user_id)).emit(
+          "participant_deleted",
+          chatData.id,
+          userParticipation.id
+        );
+      });
       io.to(socketsMap.get(user.id)).emit("chat_deleted", chatData.id);
       io.to(socket.id).emit("feedback", {
         message: `You lefted the chat "${chatData.title}"`,
