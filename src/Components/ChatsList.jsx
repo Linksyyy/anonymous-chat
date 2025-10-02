@@ -1,10 +1,8 @@
 "use client";
 import { useEffect, useState } from "react";
-import {
-  IoMdAddCircleOutline,
-  IoMdClose,
-} from "react-icons/io";
+import { IoMdAddCircleOutline, IoMdClose } from "react-icons/io";
 import { MdOutlineMailOutline } from "react-icons/md";
+import { CiMenuKebab } from "react-icons/ci";
 import { HiOutlineKey } from "react-icons/hi";
 import { FaInfoCircle } from "react-icons/fa";
 import { TiGroup } from "react-icons/ti";
@@ -15,12 +13,14 @@ import CreateChatForm from "./CreateChatForm";
 import ChatInfo from "./ChatInfo";
 import Notifications from "./Notifications";
 import KeyStatus from "./KeyStatus";
+import UserMenu from "./UserMenu";
 
 export default function ChatsList({ isOpen, onClose }) {
   const [createVisible, setCreateVisible] = useState(false);
   const [chatInfoVisible, setChatInfoVisible] = useState(false);
   const [notificationsVisible, setNotificationsVisible] = useState(false);
   const [keyStatusVisible, setKeyStatusVisible] = useState(false);
+  const [userMenuVisible, setUserMenuVisible] = useState(false);
   const [chatToSeeInfo, setChatToSeeInfo] = useState(null);
 
   const { id, username, chats, setChats, notifications, setNotifications } =
@@ -51,9 +51,7 @@ export default function ChatsList({ isOpen, onClose }) {
     <>
       {createVisible && (
         <CreateChatForm
-          toggleVisible={() =>
-            setCreateVisible(createVisible ? false : true)
-          }
+          toggleVisible={() => setCreateVisible(createVisible ? false : true)}
           I
         />
       )}
@@ -77,6 +75,13 @@ export default function ChatsList({ isOpen, onClose }) {
         <KeyStatus
           toggleVisible={() =>
             setKeyStatusVisible(keyStatusVisible ? false : true)
+          }
+        />
+      )}
+      {userMenuVisible && (
+        <UserMenu
+          toggleVisible={() =>
+            setUserMenuVisible(userMenuVisible ? false : true)
           }
         />
       )}
@@ -150,13 +155,21 @@ export default function ChatsList({ isOpen, onClose }) {
             />
           </div>
         ))}
-        <footer className="absolute bottom-0 bg-primary-1 w-full flex items-center justify-center h-1/18">
-          Logged in with {username}
+        <footer className="absolute bottom-0 bg-primary-1 w-full flex items-center justify-between px-3 text-center h-1/18">
+          <button
+            onClick={() => {
+              setUserMenuVisible(userMenuVisible ? false : true);
+            }}
+            className="p-2 rounded-4xl hover:bg-primary-2 cursor-pointer"
+          >
+            <CiMenuKebab className="size-6" />
+          </button>
+          <p>Logged in with {username}</p>
         </footer>
       </aside>
       {isOpen && (
         <div
-          className="fixed inset-0 bg-black opacity-50 z-20 md:hidden"
+          className="fixed inset-0 bg-black/50 z-20 md:hidden"
           onClick={onClose}
         ></div>
       )}
