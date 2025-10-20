@@ -54,8 +54,8 @@ export async function createParticipant(
   return newParticipation[0];
 }
 
-export async function createChat(title: string = "NO NAME") {
-  return await db.insert(chats).values({ title }).returning();
+export async function createChat(title: string = "NO NAME", creator_id: string) {
+  return await db.insert(chats).values({ title, creator_id }).returning();
 }
 
 export async function findChat(chatId: string) {

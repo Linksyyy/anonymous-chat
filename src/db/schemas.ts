@@ -28,15 +28,16 @@ export const chats = pgTable("chats", {
   title: varchar({ length: 255 }),
   created_at: timestamp().defaultNow().notNull(),
   updated_at: timestamp(),
+  creator_id: uuid().references(() => users.id, { onDelete: "set null" }),
 });
 
 export const participants = pgTable("participants", {
   id: uuid().primaryKey().defaultRandom(),
   user_id: uuid()
-    .references(() => users.id)
+    .references(() => users.id, { onDelete: "cascade" })
     .notNull(),
   chat_id: uuid()
-    .references(() => chats.id)
+    .references(() => chats.id, { onDelete: "cascade" })
     .notNull(),
   joined_at: timestamp().defaultNow().notNull(),
   role: rolesEnum().default("guest"),
@@ -48,7 +49,7 @@ export const messages = pgTable("messages", {
     .references(() => users.id)
     .notNull(),
   chat_id: uuid()
-    .references(() => chats.id, {onDelete: "cascade"})
+    .references(() => chats.id, { onDelete: "cascade" })
     .notNull(),
   encrypted_message: text("encrypted_message").notNull(),
   created_at: timestamp().defaultNow().notNull(),
@@ -56,9 +57,9 @@ export const messages = pgTable("messages", {
 
 export const notifications = pgTable("notifications", {
   id: uuid().primaryKey().defaultRandom(),
-  sender_id: uuid().references(() => users.id),
-  receiver_id: uuid().references(() => users.id),
-  chat_id: uuid().references(() => chats.id),
+  sender_id: uuid().references(() => users.id, { onDelete: "cascade" }),
+  receiver_id: uuid().references(() => users.id, { onDelete: "cascade" }),
+  chat_id: uuid().references(() => chats.id, { onDelete: "cascade" }),
   type: notificationsTypesEnum().notNull(),
   created_at: timestamp().defaultNow().notNull(),
   encrypted_group_key: text("encrypted_group_key"),

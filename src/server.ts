@@ -52,7 +52,7 @@ app.prepare().then(async () => {
 
     socket.on("new_chat", async (title, encryptedGroupKey) => {
       if (title.trim() !== "") {
-        const [chatCreated] = await createChat(title);
+        const [chatCreated] = await createChat(title, user.id);
         await createParticipant(user.id, chatCreated.id, "admin");
         const chatData = await findChat(chatCreated.id);
 
@@ -176,6 +176,14 @@ app.prepare().then(async () => {
     });
 
     socket.on("exit_chat", async (chatData) => {
+      console.log(chatData)
+      if (user.id === chatData.creator_id) {
+        io.to(socket.id).emit("feedback", {
+          message: "You can't leave, you're the creator!",
+          hasError: true,
+        });
+        return;
+      }
       const userParticipation = chatData.participants.filter(
         (p) => p.user_id === user.id
       )[0];
