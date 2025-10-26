@@ -94,12 +94,13 @@ export default function ChatsList({ isOpen, onClose }) {
           <div className="items-center justify-center gap-2">
             <div className="w-full justify-between flex">
               <div className="relative">
-                <MdOutlineMailOutline
+                <button
                   onClick={() =>
                     setNotificationsVisible(notificationsVisible ? false : true)
                   }
-                  className="cursor-pointer text-white hover:text-gray-400 relative size-8"
-                />
+                >
+                  <MdOutlineMailOutline className="cursor-pointer text-white hover:text-gray-400 relative size-8" />
+                </button>
                 {notifications.length > 0 && (
                   <div className="absolute top-0 right-0 bg-primary-0 w-3 h-3 rounded-full flex items-center justify-center">
                     <div className="w-2 h-2 bg-red-600 rounded-full" />
@@ -108,18 +109,19 @@ export default function ChatsList({ isOpen, onClose }) {
               </div>
               <div className="flex gap-4">
                 <div className="relative">
-                  <HiOutlineKey
+                  <button
                     onClick={() =>
                       setKeyStatusVisible(keyStatusVisible ? false : true)
                     }
-                    className="cursor-pointer text-white hover:text-gray-400 size-8"
-                  />
+                  >
+                    <HiOutlineKey className="cursor-pointer text-white hover:text-gray-400 size-8" />
+                  </button>
                 </div>
-
-                <IoMdAddCircleOutline
+                <button
                   onClick={() => setCreateVisible(createVisible ? false : true)}
-                  className="cursor-pointer text-white hover:text-gray-400 size-8"
-                />
+                >
+                  <IoMdAddCircleOutline className="cursor-pointer text-white hover:text-gray-400 size-8" />
+                </button>
                 <button onClick={onClose} className="md:hidden">
                   <IoMdClose className="size-8" />
                 </button>
@@ -146,13 +148,15 @@ export default function ChatsList({ isOpen, onClose }) {
                 {chat.title}
               </h2>
             </button>
-            <FaInfoCircle
-              className="w-2/10 absolute right-0 justify-center flex items-center opacity-0 group-hover:opacity-100 transition-opacity cursor-pointer hover:text-neutral-400 size-5"
+            <button
+              className="w-2/10 absolute right-0 justify-center flex items-center opacity-0 group-hover:opacity-100 transition-opacity cursor-pointer hover:text-neutral-400"
               onClick={() => {
                 setChatInfoVisible(chatInfoVisible ? false : true);
                 setChatToSeeInfo(chat);
               }}
-            />
+            >
+              <FaInfoCircle className="size-5" />
+            </button>
           </div>
         ))}
         <footer className="absolute bottom-0 bg-primary-1 w-full flex items-center justify-between px-3 text-center h-1/18">
@@ -164,7 +168,7 @@ export default function ChatsList({ isOpen, onClose }) {
           >
             <CiMenuKebab className="size-6" />
           </button>
-          <p>Logged in with {username}</p>
+          {username && <p>Logged in with {username}</p>}
         </footer>
       </aside>
       {isOpen && (

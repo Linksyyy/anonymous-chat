@@ -27,10 +27,9 @@ export default function KeyStatus({ toggleVisible }) {
       >
         <div className="p-3 border-b border-primary-2 flex items-center justify-between">
           <h2 className="text-md font-semibold">Keys Manager</h2>
-          <FiX
-            onClick={toggleVisible}
-            className="size-8 hover:text-neutral-500 cursor-pointer"
-          />
+          <button onClick={toggleVisible}>
+            <FiX className="size-8 hover:text-neutral-500 cursor-pointer" />
+          </button>
         </div>
         <div className="p-2">
           {actualUserManager.chats.length === 0 ? (

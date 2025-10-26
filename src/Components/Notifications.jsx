@@ -20,8 +20,11 @@ export default function Notifications({ toggleVisible, notifications }) {
         onClick={(e) => e.stopPropagation()}
         className="absolute top-12 left-10 bg-primary-1 rounded-tl-none rounded-4xl shadow-lg w-80 ring-1 ring-primary-2"
       >
-        <div className="p-4 border-b border-primary-2">
+        <div className="p-4 border-b border-primary-2 flex justify-between">
           <h2 className="text-lg font-semibold">Notifications</h2>
+          <button onClick={toggleVisible}>
+            <FiX className="size-8 hover:text-neutral-500 cursor-pointer" />
+          </button>
         </div>
         <div className="p-4">
           {notifications && notifications.length > 0 ? (

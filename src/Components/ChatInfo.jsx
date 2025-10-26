@@ -99,14 +99,17 @@ export default function ChatInfo({ chat, toggleVisible }) {
             <div className="flex flex-row justify-between">
               <h2 className="text-xl font-bold">Participants:</h2>
               <div className="flex gap-4 mb-1">
-                <button className="bg-red-700 hover:bg-red-800 hover:text-neutral-500 cursor-pointer rounded-4xl h-8 w-8 flex items-center justify-center">
-                  <ImExit onClick={handleExitChat} className="size-5" />
+                <button
+                  className="bg-red-700 hover:bg-red-800 hover:text-neutral-500 cursor-pointer rounded-4xl h-8 w-8 flex items-center justify-center"
+                  onClick={handleExitChat}
+                >
+                  <ImExit className="size-5" />
                 </button>
-                <button className="bg-green-600 hover:bg-green-700 hover:text-neutral-500 cursor-pointer rounded-4xl h-8 w-8 flex items-center justify-center">
-                  <BsPersonAdd
-                    onClick={toggleInviteSearch}
-                    className="size-6"
-                  />
+                <button
+                  className="bg-green-600 hover:bg-green-700 hover:text-neutral-500 cursor-pointer rounded-4xl h-8 w-8 flex items-center justify-center"
+                  onClick={toggleInviteSearch}
+                >
+                  <BsPersonAdd className="size-6" />
                 </button>
               </div>
             </div>
