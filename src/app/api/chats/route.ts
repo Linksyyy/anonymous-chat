@@ -42,7 +42,7 @@ export async function POST(req: NextRequest) {
         { status: 400 }
       );
     }
-    const [chatCreated] = await createChat(title);
+      const [chatCreated] = await createChat(title, creatorId);
     await createParticipant(creatorId, chatCreated.id, "admin");
 
     return NextResponse.json(
